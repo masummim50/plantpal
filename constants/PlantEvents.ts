@@ -1,0 +1,18 @@
+export const plantEvents = [
+  "watered",
+  "fertilized",
+  "pruned",
+  "repotted",
+  "harvested",
+  "treated",
+  "transplanted",
+  "sowed",
+  "sprayed",
+  "staked",
+  "deadheaded",
+  "checked",
+  "germinated",
+  "covered",
+  "uncovered",
+  "topped",
+];
