@@ -60,7 +60,7 @@ useFocusEffect(
             data={logbook}
             keyExtractor={(item, index) => `${item.date}-${index}`}
             renderItem={renderItem}
-            contentContainerStyle={[styles.container]}
+            contentContainerStyle={[styles.container, {paddingBottom:100}]}
           />
         </View>
       )}

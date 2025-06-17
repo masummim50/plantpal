@@ -2,7 +2,7 @@ import { Colors } from "@/constants/Colors";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import * as FileSystem from "expo-file-system";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Alert,
   Button,
@@ -17,7 +17,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import uuid from 'react-native-uuid';
+import uuid from "react-native-uuid";
 const PLANTS_DIR = FileSystem.documentDirectory + "plants/";
 export default function AddPlantScreen() {
   const [plantedAt, setPlantedAt] = useState(new Date());
@@ -40,7 +40,7 @@ export default function AddPlantScreen() {
       name: name.trim(),
       plantedAt,
       events: [],
-      notes:[],
+      notes: [],
     };
 
     try {
@@ -55,6 +55,7 @@ export default function AddPlantScreen() {
       await FileSystem.writeAsStringAsync(filePath, JSON.stringify(newPlant));
 
       setName("");
+      setPlantedAt(new Date());
       router.replace("/");
     } catch (error) {
       Alert.alert("Error", "Could not save the plant.");
@@ -62,13 +63,24 @@ export default function AddPlantScreen() {
     }
   };
 
+  const nameInputRef = useRef<TextInput>(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      nameInputRef.current?.focus();
+    }, 100); // small delay to ensure screen is ready
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <ScrollView keyboardShouldPersistTaps="handled"
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
           contentContainerStyle={[
             styles.container,
             { backgroundColor: themeColors.background },
@@ -79,6 +91,7 @@ export default function AddPlantScreen() {
           </Text>
 
           <TextInput
+            ref={nameInputRef}
             style={[
               styles.input,
               {
@@ -114,7 +127,7 @@ export default function AddPlantScreen() {
           />
           {showPicker && (
             <DateTimePicker
-            maximumDate={new Date()}
+              maximumDate={new Date()}
               value={plantedAt}
               mode="date"
               display="spinner" // or "default"

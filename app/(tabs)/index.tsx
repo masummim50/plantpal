@@ -1,10 +1,11 @@
 // app/(tabs)/index.tsx
 import { Colors } from "@/constants/Colors";
 import { formatPrettyDate, getDaysDifference } from "@/functions/Date";
+import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import * as FileSystem from "expo-file-system";
 import { useRouter } from "expo-router";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   FlatList,
   StyleSheet,
@@ -23,11 +24,20 @@ interface Plant {
 const PLANTS_DIR = FileSystem.documentDirectory + "plants/";
 
 export default function HomeScreen() {
+  const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
   const theme = useColorScheme();
   const themeColors = Colors[theme || "light"];
   const router = useRouter();
   const [plants, setPlants] = useState<Plant[]>([]);
   const [loading, setLoading] = useState(true);
+
+  function sortPlantsByDate(plants: Plant[], order: "newest" | "oldest") {
+    return [...plants].sort((a, b) => {
+      const dateA = new Date(a.plantedAt).getTime();
+      const dateB = new Date(b.plantedAt).getTime();
+      return order === "newest" ? dateB - dateA : dateA - dateB;
+    });
+  }
 
   const loadPlants = async () => {
     try {
@@ -49,8 +59,8 @@ export default function HomeScreen() {
         const plant: Plant = JSON.parse(content);
         loadedPlants.push(plant);
       }
-
-      setPlants(loadedPlants);
+      const sortedPlants = sortPlantsByDate(loadedPlants, sortOrder);
+      setPlants(sortedPlants);
     } catch (error) {
       console.error("Failed to load plants", error);
     } finally {
@@ -64,9 +74,33 @@ export default function HomeScreen() {
     }, [])
   );
 
+  useEffect(() => {
+    setPlants((prev) => sortPlantsByDate(prev, sortOrder));
+  }, [sortOrder]);
+  // const [sortNewestFirst, setSortNewestFirst] = useState(true);
+  const toggleSort = () => {
+    setSortOrder(sortOrder === "newest" ? "oldest" : "newest");
+  };
+
   return (
-    <View style={[styles.container, { backgroundColor: themeColors.background}]}>
-      <Text style={[styles.title, { color: themeColors.text}]}>🌱 My Garden</Text>
+    <View
+      style={[styles.container, { backgroundColor: themeColors.background }]}
+    >
+      <View style={styles.header}>
+        <Text style={[styles.title, { color: themeColors.text }]}>
+          🌱 My Garden
+        </Text>
+        <TouchableOpacity onPress={toggleSort} style={styles.toggleButton}>
+          <Ionicons
+            name={sortOrder === "newest" ? "arrow-down" : "arrow-up"}
+            size={18}
+            color={themeColors.iconColor}
+          />
+          <Text style={[styles.toggleText, { color: themeColors.text }]}>
+            {sortOrder === "newest" ? "Newest first" : "Oldest first"}
+          </Text>
+        </TouchableOpacity>
+      </View>
       <FlatList
         data={plants}
         keyExtractor={(item) => item.id}
@@ -85,13 +119,17 @@ export default function HomeScreen() {
               })
             }
           >
-            <Text style={[styles.plantName, { color: themeColors.text}]}>{item.name}</Text>
-            <Text style={[styles.date, { color: themeColors.text, opacity: 0.6}]}>
-              {
-                getDaysDifference(new Date(item.plantedAt)).time === 0
-                  ? "Planted today"
-                  : `Planted ${getDaysDifference(new Date(item.plantedAt)).time} days ago on ${formatPrettyDate(item.plantedAt)}`
-              }
+            <Text style={[styles.plantName, { color: themeColors.text }]}>
+              {item.name}
+            </Text>
+            <Text
+              style={[styles.date, { color: themeColors.text, opacity: 0.6 }]}
+            >
+              {getDaysDifference(new Date(item.plantedAt)).time === 0
+                ? "Planted today"
+                : `Planted ${
+                    getDaysDifference(new Date(item.plantedAt)).time
+                  } days ago on ${formatPrettyDate(item.plantedAt)}`}
               {/* Planted {getDaysDifference(new Date(item.plantedAt)).time === 0 ? "today" : getDaysDifference(new Date(item.plantedAt)).time} days ago on {formatPrettyDate(item.plantedAt)} */}
             </Text>
           </TouchableOpacity>
@@ -102,8 +140,9 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16,  },
-  title: { fontSize: 24, fontWeight: "bold", marginBottom: 16 },
+  header: { flexDirection: "row", justifyContent: "space-between" , alignItems: "center",  paddingVertical: 16},
+  container: { flex: 1, padding: 16 },
+  title: { fontSize: 24, fontWeight: "bold",  },
   empty: { textAlign: "center", color: "#888", marginTop: 20 },
   card: {
     padding: 16,
@@ -112,4 +151,13 @@ const styles = StyleSheet.create({
   },
   plantName: { fontSize: 18, fontWeight: "600" },
   date: { fontSize: 14, color: "#666" },
+
+  toggleButton: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  toggleText: {
+    marginLeft: 6,
+    fontSize: 14,
+  },
 });

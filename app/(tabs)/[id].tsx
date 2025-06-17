@@ -1,26 +1,27 @@
 // app/[id].tsx
-import AddNotes from "@/components/AddNotes";
-import EventSection from "@/components/EventSection";
-import NotesSection from "@/components/NotesSection";
-import PlantEvents from "@/components/PlantEvents";
+import DetailsTab from "@/components/DetailsTab";
+import GalleryTab from "@/components/GalleryTab";
 import { Colors } from "@/constants/Colors";
 import { formatPrettyDate } from "@/functions/Date";
 import { Event, Note, Plant } from "@/interfaces/plantInterface";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import * as FileSystem from "expo-file-system";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Keyboard,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   useColorScheme,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const PLANTS_DIR = FileSystem.documentDirectory + "plants/";
+
+const Tab = createMaterialTopTabNavigator();
 
 export default function PlantDetailsScreen() {
   const { id } = useLocalSearchParams();
@@ -29,6 +30,7 @@ export default function PlantDetailsScreen() {
   const color = Colors[colorScheme ?? "light"];
   const [plant, setPlant] = useState<Plant | null>(null);
   const [loading, setLoading] = useState(true);
+
 
   useEffect(() => {
     const loadPlant = async () => {
@@ -205,80 +207,75 @@ export default function PlantDetailsScreen() {
   }
 
   return (
-    <ScrollView
-      style={{ backgroundColor: color.background }}
-      contentContainerStyle={styles.scrollContent}
-      keyboardShouldPersistTaps="handled"
-    >
-      <View style={styles.inner}>
-        <View
+    <SafeAreaView style={{ flex: 1, backgroundColor: color.background }}>
+      {/* Fixed Header */}
+      <View style={styles.headerContainer}>
+        <View>
+          <Text style={[styles.title, { color: color.title }]}>
+            {plant.name}
+          </Text>
+          <Text style={[styles.subtitle, { color: color.text }]}>
+            Planted on {formatPrettyDate(plant.plantedAt)}
+          </Text>
+        </View>
+        <TouchableOpacity
+          onPress={deletePlant}
           style={{
-            borderBottomWidth: 2,
-            borderColor: color.uiBackground,
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignContent: "center",
-            alignItems: "center",
+            backgroundColor: "#cc475a",
+            padding: 12,
+            borderRadius: 8,
           }}
         >
-          <View>
-            <Text style={[styles.title, { color: color.title }]}>
-              {plant.name}
-            </Text>
-            <Text style={[styles.subtitle, { color: color.text }]}>
-              Planted on {formatPrettyDate(plant.plantedAt)}
-            </Text>
-          </View>
-          <TouchableOpacity
-            onPress={deletePlant}
-            style={{
-              backgroundColor: "#cc475a",
-              padding: 12,
-              borderRadius: 8,
-            }}
-          >
-            <Text
-              style={{ color: "#fff", textAlign: "center", fontWeight: "600" }}
-            >
-              Delete Plant
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        <PlantEvents onAddEvent={handleAddEvent} />
-
-        <AddNotes onAddNote={handleAddNote} />
-
-        {plant.events?.length ? (
-          <EventSection events={plant.events} handleDeleteEvent={handleDeleteEvent} />
-        ) : (
-          <Text style={[styles.itemText, { color: color.text }]}>
-            No events recorded.
-          </Text>
-        )}
-
-        {plant.notes.length ? (
-          <NotesSection notes={plant.notes} onDeleteNote={handleDeleteNote} />
-        ) : (
-          <Text style={[styles.itemText, { color: color.text }]}>
-            No notes
-          </Text>
-        )}
+          <Text style={{ color: "#fff", fontWeight: "600" }}>Delete Plant</Text>
+        </TouchableOpacity>
       </View>
-    </ScrollView>
+
+      {/* Fixed Tab Bar */}
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          tabBarStyle: {
+            backgroundColor: color.uiBackground,
+          },
+          tabBarLabelStyle: {
+            fontWeight: "bold",
+            color: color.text,
+          },
+          tabBarIndicatorStyle: {
+            backgroundColor: Colors.primary,
+          },
+        })}
+      >
+        <Tab.Screen name="Details">
+          {() => (
+            <DetailsTab
+              plant={plant}
+              color={color}
+              handleAddEvent={handleAddEvent}
+              handleAddNote={handleAddNote}
+              handleDeleteEvent={handleDeleteEvent}
+              handleDeleteNote={handleDeleteNote}
+            />
+          )}
+        </Tab.Screen>
+        <Tab.Screen name="Gallery">
+          {() => <GalleryTab plant={plant} />}
+        </Tab.Screen>
+      </Tab.Navigator>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
+  headerContainer: {
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 16,
+    flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
   },
-  scrollContent: {
+  scrollTabContent: {
     padding: 16,
-  },
-  inner: {
     paddingBottom: 32,
   },
   title: {
@@ -288,22 +285,20 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 16,
-    marginBottom: 24,
-  },
-  section: {
-    marginTop: 16,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: "600",
-    marginBottom: 8,
+    marginBottom: 6,
   },
   itemText: {
     fontSize: 16,
-    marginBottom: 6,
+    marginBottom: 10,
+  },
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   errorText: {
     fontSize: 18,
     textAlign: "center",
   },
 });
+
