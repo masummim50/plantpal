@@ -70,7 +70,7 @@ export default function PlantDetailsScreen() {
       }
 
       plantData.events.push(event);
-
+// need to add the modal
       // Sort by date (newest first or oldest first based on your preference)
       plantData.events.sort(
         (a: any, b: any) =>
