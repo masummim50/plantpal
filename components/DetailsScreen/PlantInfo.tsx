@@ -22,7 +22,7 @@ const PlantInfo = ({
   const daysAgo = getDaysDifference(new Date(plant.plantedAt)).time;
   return (
     <View style={styles.headerContainer}>
-      <View>
+      <View style={styles.leftContent}>
         <Text style={[styles.title, { color: color.title }]}>{plant.name}</Text>
         <Text style={[styles.subtitle, { color: color.text }]}>
           Planted on {formatPrettyDate(plant.plantedAt)}
@@ -50,16 +50,21 @@ export default PlantInfo;
 const styles = StyleSheet.create({
   headerContainer: {
     paddingHorizontal: 16,
-    paddingTop: 8,
+    paddingTop: 0,
     paddingBottom: 16,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+  },leftContent: {
+    flex: 1,             // allow to grow
+    flexShrink: 1,       // allow to shrink if needed
+    paddingRight: 10,    // give space from delete button
   },
   title: {
     fontSize: 26,
     fontWeight: "bold",
     marginBottom: 6,
+    flexWrap: "wrap",
   },
   subtitle: {
     fontSize: 16,

@@ -1,13 +1,14 @@
-import DetailsScreen from '@/components/DetailsScreen/DetailsScreen'
-import React from 'react'
-import { StyleSheet } from 'react-native'
+import DetailsScreen from "@/components/DetailsScreen/DetailsScreen";
+import React from "react";
+import { StyleSheet } from "react-native";
 
 const Details = () => {
   return (
-    <DetailsScreen/>
-  )
-}
+    
+      <DetailsScreen />
+  );
+};
 
-export default Details
+export default Details;
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({});

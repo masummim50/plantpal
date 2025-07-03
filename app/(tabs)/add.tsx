@@ -104,6 +104,7 @@ export default function AddPlantScreen() {
             placeholderTextColor={themeColors.iconColor}
             value={name}
             onChangeText={setName}
+            maxLength={50}
           />
 
           <View style={{ marginBottom: 16 }}>

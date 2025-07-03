@@ -3,14 +3,15 @@ import { Colors } from "@/constants/Colors";
 import { Note } from "@/interfaces/plantInterface";
 import React, { useState } from "react";
 import {
+  Keyboard,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   useColorScheme,
-  View,
+  View
 } from "react-native";
-import uuid from 'react-native-uuid';
+import uuid from "react-native-uuid";
 
 export default function AddNotes({
   onAddNote,
@@ -21,54 +22,54 @@ export default function AddNotes({
   const color = Colors[scheme];
   const [note, setNote] = useState("");
 
-
-
   const handleAdd = () => {
     if (!note.trim()) return;
     const newNote = {
       id: uuid.v4(),
-      note
-    }
+      note,
+    };
 
     onAddNote(newNote);
     setNote("");
+    Keyboard.dismiss();
   };
 
   return (
-    <View style={[styles.container]}>
-      {/* <Text style={[styles.label, { color: color.title }]}>Add Event</Text> */}
+    
+      <View style={[styles.container]}>
+        {/* <Text style={[styles.label, { color: color.title }]}>Add Event</Text> */}
 
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          alignContent: "center",
-          gap: 5,
-        }}
-      >
-        <TextInput
-          value={note}
-          onChangeText={setNote}
-          placeholder="Add Note"
-          placeholderTextColor="#aaa"
-          style={[
-            styles.input,
-            {
-              backgroundColor: color.uiBackground,
-              color: color.text,
-              flex: 1,
-            },
-          ]}
-        />
-
-        <TouchableOpacity
-          onPress={handleAdd}
-          style={[styles.addButton, { backgroundColor: Colors.primary }]}
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            alignContent: "center",
+            gap: 5,
+          }}
         >
-          <Text style={{ color: "#fff", fontWeight: "bold" }}>Add Note</Text>
-        </TouchableOpacity>
+          <TextInput
+            value={note}
+            onChangeText={setNote}
+            placeholder="Add Note"
+            placeholderTextColor="#aaa"
+            style={[
+              styles.input,
+              {
+                backgroundColor: color.uiBackground,
+                color: color.text,
+                flex: 1,
+              },
+            ]}
+          />
+
+          <TouchableOpacity
+            onPress={handleAdd}
+            style={[styles.addButton, { backgroundColor: Colors.primary }]}
+          >
+            <Text style={{ color: "#fff", fontWeight: "bold" }}>Add Note</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
   );
 }
 

@@ -1,4 +1,4 @@
-import uuid from 'react-native-uuid';
+import uuid from "react-native-uuid";
 // components/PlantEvents.tsx
 import { Colors } from "@/constants/Colors";
 import { plantEvents } from "@/constants/PlantEvents";
@@ -19,7 +19,6 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-
 
 const quickEvents = plantEvents.slice(0, 4);
 const moreEvents = plantEvents.slice(4);
@@ -52,7 +51,7 @@ export default function PlantEvents({
       name: eventName.trim(),
       date: eventDate.toISOString(),
       past: isFuture ? false : true,
-      completed: isFuture ? false : true
+      completed: isFuture ? false : true,
     });
 
     setEventName("");
@@ -61,109 +60,138 @@ export default function PlantEvents({
 
   return (
     <KeyboardAvoidingView
-          style={{ flex: 1 }}
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-        >
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <View style={[styles.container]}>
+        {/* <Text style={[styles.label, { color: color.title }]}>Add Event</Text> */}
 
-    <View style={[styles.container]}>
-      <Text style={[styles.label, { color: color.title }]}>Add Event</Text>
+        <View style={styles.quickRow}>
+          {quickEvents.map((e) => (
+            <TouchableOpacity
+              key={e}
+              onPress={() => handleSelectEvent(e)}
+              style={[
+                styles.quickButton,
+                { backgroundColor: color.uiBackground },
+              ]}
+            >
+              <Text style={{ color: color.title }}>{e}</Text>
+            </TouchableOpacity>
+          ))}
 
-      <View style={styles.quickRow}>
-        {quickEvents.map((e) => (
           <TouchableOpacity
-            key={e}
-            onPress={() => handleSelectEvent(e)}
-            style={[styles.quickButton, { backgroundColor: color.uiBackground }]}
+            onPress={() => setShowModal(true)}
+            style={[
+              styles.quickButton,
+              { backgroundColor: color.uiBackground },
+            ]}
           >
-            <Text style={{ color: color.title }}>{e}</Text>
+            <Text style={{ color: color.title }}>More…</Text>
           </TouchableOpacity>
-        ))}
-
-        <TouchableOpacity
-          onPress={() => setShowModal(true)}
-          style={[styles.quickButton, { backgroundColor: color.uiBackground }]}
-        >
-          <Text style={{ color: color.title }}>More…</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={{flexDirection: 'row', alignItems: 'center', alignContent: 'center', gap:5}}>
-      <TextInput
-        value={eventName}
-        onChangeText={setEventName}
-        placeholder="Custom event"
-        
-        placeholderTextColor="#aaa"
-        style={[
-          styles.input,
-          {
-            backgroundColor: color.uiBackground,
-            color: color.text,
-            flex:1
-          },
-        ]}
-        />
-        <Pressable style={{height:45, borderRadius:10, paddingHorizontal:12, justifyContent: 'center', backgroundColor:'lightblue'}}  onPress={() => setShowPicker(true)}>
-          <Text>Pick a date</Text>
-        </Pressable>
         </View>
 
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            alignContent: "center",
+            gap: 5,
+          }}
+        >
+          <TextInput
+            value={eventName}
+            onChangeText={setEventName}
+            placeholder="Event Name"
+            placeholderTextColor="#aaa"
+            style={[
+              styles.input,
+              {
+                backgroundColor: color.uiBackground,
+                color: color.text,
+                flex: 1,
+              },
+            ]}
+          />
+          <Pressable
+            style={{
+              height: 45,
+              borderRadius: 10,
+              paddingHorizontal: 12,
+              justifyContent: "center",
+              backgroundColor: "lightblue",
+            }}
+            onPress={() => setShowPicker(true)}
+          >
+            <Text>Pick a date</Text>
+          </Pressable>
+        </View>
 
-      {showPicker && (
-        <DateTimePicker
+        {showPicker && (
+          <DateTimePicker
             value={eventDate}
             mode="date"
             maximumDate={new Date()}
-              display="spinner" // or "default"
-              onChange={(event, selectedDate) => {
-                setShowPicker(false);
-                if (selectedDate) setEventDate(selectedDate);
-              }}
-            />
-          )}
+            display="spinner" // or "default"
+            onChange={(event, selectedDate) => {
+              setShowPicker(false);
+              if (selectedDate) setEventDate(selectedDate);
+            }}
+          />
+        )}
 
-      <TouchableOpacity
-        onPress={handleAdd}
-        style={[styles.addButton, { backgroundColor: Colors.primary }]}
-      >
-        <Text style={{ color: "#fff", fontWeight: "bold" }}>Add Event</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          onPress={handleAdd}
+          style={[styles.addButton, { backgroundColor: Colors.primary }]}
+        >
+          <Text style={{ color: "#fff", fontWeight: "bold" }}>Add Event</Text>
+        </TouchableOpacity>
 
-      {/* Modal for 'More...' */}
-      <Modal visible={showModal} animationType="fade" transparent>
-        <View style={styles.modalOverlay}>
-          <View style={[styles.modalContent, { backgroundColor: color.background }]}>
-            <Text style={[styles.label, { color: color.title }]}>Choose Event</Text>
-            <FlatList
-              data={moreEvents}
-              numColumns={3}
-              keyExtractor={(item) => item}
-              contentContainerStyle={{ paddingVertical: 12 }}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  onPress={() => handleSelectEvent(item)}
-                  style={[styles.modalButton, { backgroundColor: color.uiBackground }]}
-                >
-                  <Text style={{ color: color.title }}>{item}</Text>
-                </TouchableOpacity>
-              )}
+        {/* Modal for 'More...' */}
+        <Modal visible={showModal} animationType="fade" transparent>
+          <View style={styles.modalOverlay}>
+            <View
+              style={[
+                styles.modalContent,
+                { backgroundColor: color.background },
+              ]}
+            >
+              <Text style={[styles.label, { color: color.title }]}>
+                Choose Event
+              </Text>
+              <FlatList
+                data={moreEvents}
+                numColumns={3}
+                keyExtractor={(item) => item}
+                contentContainerStyle={{ paddingVertical: 12 }}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    onPress={() => handleSelectEvent(item)}
+                    style={[
+                      styles.modalButton,
+                      { backgroundColor: color.uiBackground },
+                    ]}
+                  >
+                    <Text style={{ color: color.title }}>{item}</Text>
+                  </TouchableOpacity>
+                )}
               />
-            <TouchableOpacity
-              onPress={() => setShowModal(false)}
-              style={[styles.closeModal, { borderColor: Colors.primary }]}
+              <TouchableOpacity
+                onPress={() => setShowModal(false)}
+                style={[styles.closeModal, { borderColor: Colors.primary }]}
               >
-              <Text style={{ color: Colors.primary }}>Close</Text>
-            </TouchableOpacity>
+                <Text style={{ color: Colors.primary }}>Close</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </Modal>
-    </View>
-</KeyboardAvoidingView>
+        </Modal>
+      </View>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { marginTop: 20 },
+  container: { marginTop: 5 },
   label: { fontSize: 16, marginBottom: 8 },
   input: {
     padding: 12,

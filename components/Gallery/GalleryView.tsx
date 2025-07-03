@@ -25,61 +25,12 @@ export type PhotoMeta = {
   daysAgo: number;
 };
 export default function GalleryView({ plantId, plantedAt }: Props) {
-  // const [viewMode, setViewMode] = useState<"list" | "grid">("grid");
-  //   const [photosLoading, setPhotosLoading] = useState(true);
-  //   const [photos, setPhotos] = useState<PhotoMeta[]>([]);
-  //   const [track, setTrack] = useState(0);
-
-  // useEffect(()=> {
-  //   const loadPhotos = async () => {
-  //     setPhotosLoading(true);
-  //     setPhotos([]);
-  //     const loadedPhotos = await GalleryFunctions.loadPhotos(plantId, plantedAt);
-  //     setPhotos(loadedPhotos);
-  //     setPhotosLoading(false);
-  //   }
-  //   loadPhotos();
-  //   return ()=> {
-  //     setPhotos([]);
-  //     setTrack(track+1);
-  //   }
-  // },[plantId, track])
+  
   const [viewMode, setViewMode] = useState<"list" | "grid">("grid");
   const [photosLoading, setPhotosLoading] = useState(true);
   const [photos, setPhotos] = useState<PhotoMeta[]>([]);
   const [currentPlantId, setCurrentPlantId] = useState<string | null>(null);
-  // deepseek first answer
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     // Only clear and reload if plantId has changed
-  //     if (currentPlantId !== plantId) {
-  //       setPhotos([]);
-  //       setPhotosLoading(true);
-  //       setCurrentPlantId(plantId);
-  //     }
 
-  //     const loadPhotos = async () => {
-  //       const loadedPhotos = await GalleryFunctions.loadPhotos(plantId, plantedAt);
-  //       // Only update if we're still on the same plant
-  //       if (currentPlantId === plantId) {
-  //         setPhotos(loadedPhotos);
-  //         setPhotosLoading(false);
-  //       }
-  //     };
-
-  //     loadPhotos();
-
-  //     return () => {
-  //       // Only clear if we're navigating to a different plant
-  //       if (currentPlantId !== plantId) {
-  //         setPhotos([]);
-  //         setPhotosLoading(true);
-  //       }
-  //     };
-  //   }, [plantId, plantedAt, currentPlantId])
-  // );
-
-  // deepseek second answer
   useFocusEffect(
     useCallback(() => {
       let isActive = true;
@@ -104,12 +55,7 @@ export default function GalleryView({ plantId, plantedAt }: Props) {
     }, [plantId, plantedAt])
   );
 
-  // useFocusEffect(useCallback(() => {
 
-  //   return ()=> {
-  //     setPhotos([]);
-  //   }
-  // },[]))
 
   const theme = useColorScheme();
   const color = theme === "dark" ? Colors.dark : Colors.light;

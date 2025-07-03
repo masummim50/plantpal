@@ -1,14 +1,10 @@
 // app/[id].tsx
-import DetailsTab from "@/components/DetailsTab";
-import GalleryTab from "@/components/GalleryTab";
 import { Colors } from "@/constants/Colors";
 import { Event, Note, Plant } from "@/interfaces/plantInterface";
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import * as FileSystem from "expo-file-system";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import {
-  ActivityIndicator,
   Keyboard,
   Modal,
   StyleSheet,
@@ -16,10 +12,10 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   useColorScheme,
-  View,
+  View
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import PlantInfo from "./PlantInfo";
+import PlantTabs from "./PlantTabs";
 
 const PLANTS_DIR = FileSystem.documentDirectory + "plants/";
 
@@ -30,9 +26,7 @@ export const unstable_settings = {
 export const dynamic = "force-dynamic";
 
 export default function DetailsScreen() {
-  const Tab = createMaterialTopTabNavigator();
   const { id } = useLocalSearchParams();
-  console.log("id from params: ", id);
   const plantId = Array.isArray(id) ? id[0] : id;
   const router = useRouter();
   const colorScheme = useColorScheme();
@@ -217,7 +211,7 @@ export default function DetailsScreen() {
   if (loading) {
     return (
       <View style={[styles.container, { backgroundColor: color.background }]}>
-        <ActivityIndicator size="large" color={Colors.primary} />
+        {/* <ActivityIndicator size="large" color={Colors.primary} /> */}
       </View>
     );
   }
@@ -234,10 +228,10 @@ export default function DetailsScreen() {
   // Inside your PlantDetailsScreen component:
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: color.background }}>
+      <View style={{ flex: 1, backgroundColor: color.background , }}>
+        
       {/* Fixed Header */}
       <PlantInfo plant={plant} handleDeleteClick={handleDeleteClick} />
-
 
       <Modal
         animationType="fade"
@@ -246,78 +240,51 @@ export default function DetailsScreen() {
         onRequestClose={() => setModalVisible(false)} // Android back button
       >
         <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
-          
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalText}>
-              Are you sure you want to delete the plant?
-              {"\n"}This will remove all data associated with the plant
-              permanently.
-            </Text>
-            <View style={styles.modalButtons}>
-              <TouchableOpacity
-                onPress={() => setModalVisible(false)}
-                style={styles.cancelButton}
-              >
-                <Text style={styles.cancelButtonText}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={deletePlant}
-                style={styles.deleteButton}
-              >
-                <Text style={styles.deleteButtonText}>Delete</Text>
-              </TouchableOpacity>
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalText}>
+                Are you sure you want to delete the plant?
+                {"\n"}This will remove all data associated with the plant
+                permanently.
+              </Text>
+              <View style={styles.modalButtons}>
+                <TouchableOpacity
+                  onPress={() => setModalVisible(false)}
+                  style={styles.cancelButton}
+                >
+                  <Text style={styles.cancelButtonText}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={deletePlant}
+                  style={styles.deleteButton}
+                >
+                  <Text style={styles.deleteButtonText}>Delete</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
-        
         </TouchableWithoutFeedback>
       </Modal>
 
       {/* Fixed Tab Bar */}
-      <Tab.Navigator
-        key={plantId}
-        initialRouteName="Details"
-        screenOptions={({ route }) => ({
-          tabBarStyle: {
-            backgroundColor: color.uiBackground,
-          },
-          tabBarLabelStyle: {
-            fontWeight: "bold",
-            color: color.text,
-          },
-          tabBarIndicatorStyle: {
-            backgroundColor: Colors.primary,
-          },
-        })}
-      >
-        <Tab.Screen name="Details" key={`details-${plantId}`}>
-          {() => (
-            <DetailsTab
-              plant={plant}
-              color={color}
-              handleAddEvent={handleAddEvent}
-              handleAddNote={handleAddNote}
-              handleDeleteEvent={handleDeleteEvent}
-              handleDeleteNote={handleDeleteNote}
-            />
-          )}
-        </Tab.Screen>
-        <Tab.Screen name="Gallery" key={`gallery-${plantId}`}>
-          {() => <GalleryTab plant={plant} />}
-        </Tab.Screen>
-      </Tab.Navigator>
-    </SafeAreaView>
+      <PlantTabs
+        plant={plant}
+        handleAddEvent={handleAddEvent}
+        handleDeleteEvent={handleDeleteEvent}
+        handleAddNote={handleAddNote}
+        handleDeleteNote={handleDeleteNote}
+      />
+      
+      </View>
   );
 }
 
 const styles = StyleSheet.create({
-  
   scrollTabContent: {
     padding: 16,
     paddingBottom: 32,
   },
- 
+
   itemText: {
     fontSize: 16,
     marginBottom: 10,
@@ -332,54 +299,53 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   modalOverlay: {
-  flex: 1,
-  backgroundColor: "rgba(0,0,0,0.5)",
-  justifyContent: "center",
-  alignItems: "center",
-},
-modalContent: {
-  backgroundColor: "#fff",
-  borderRadius: 12,
-  padding: 20,
-  width: "85%",
-  shadowColor: "#000",
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.3,
-  shadowRadius: 4,
-  elevation: 5,
-},
-modalText: {
-  fontSize: 16,
-  color: "#333",
-  marginBottom: 20,
-  textAlign: "center",
-},
-modalButtons: {
-  flexDirection: "row",
-  justifyContent: "space-between",
-},
-cancelButton: {
-  flex: 1,
-  backgroundColor: "#ccc",
-  padding: 10,
-  borderRadius: 8,
-  marginRight: 10,
-},
-cancelButtonText: {
-  textAlign: "center",
-  color: "#000",
-  fontWeight: "600",
-},
-deleteButton: {
-  flex: 1,
-  backgroundColor: "#cc475a",
-  padding: 10,
-  borderRadius: 8,
-},
-deleteButtonText: {
-  textAlign: "center",
-  color: "#fff",
-  fontWeight: "600",
-},
-
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 20,
+    width: "85%",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalText: {
+    fontSize: 16,
+    color: "#333",
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  modalButtons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  cancelButton: {
+    flex: 1,
+    backgroundColor: "#ccc",
+    padding: 10,
+    borderRadius: 8,
+    marginRight: 10,
+  },
+  cancelButtonText: {
+    textAlign: "center",
+    color: "#000",
+    fontWeight: "600",
+  },
+  deleteButton: {
+    flex: 1,
+    backgroundColor: "#cc475a",
+    padding: 10,
+    borderRadius: 8,
+  },
+  deleteButtonText: {
+    textAlign: "center",
+    color: "#fff",
+    fontWeight: "600",
+  },
 });
