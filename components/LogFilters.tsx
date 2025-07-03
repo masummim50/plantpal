@@ -42,23 +42,6 @@ export default function LogFilters({order, setOrder, filter, setFilter}: FilterS
           </Text>
         </Pressable>
       ))}
-      <Pressable
-          
-          onPress={() => setFilter(!filter)}
-          style={[
-            styles.button,
-            {backgroundColor: filter ? Colors.primary : 'transparent', borderColor: Colors.primary}
-          ]}
-        >
-          <Text
-            style={[
-              styles.buttonText, {color: filter ? 'white' : color.text}
-            //   selectedFilter === filter.value && styles.selectedText,
-            ]}
-          >
-            Future Tasks
-          </Text>
-        </Pressable>
     </View>
   )
 }

@@ -113,7 +113,7 @@ export default function HomeScreen() {
           <TouchableOpacity
             style={[styles.card, { backgroundColor: themeColors.uiBackground }]}
             onPress={() =>
-              router.push({
+              router.replace({
                 pathname: "/[id]",
                 params: { id: item.id },
               })

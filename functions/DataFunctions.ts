@@ -20,7 +20,14 @@ export const getPlantInfo = async (plantId: string) => {
   } catch (error) {
     console.error("Error getting plant info:", error);
   }
-}
+};
+const deleteAllPhotos = async (plantId: string) => {
+  const folderUri = `${FileSystem.documentDirectory}${plantId}_images`;
+  const folderInfo = await FileSystem.getInfoAsync(folderUri);
+  if (folderInfo.exists) {
+    await FileSystem.deleteAsync(folderUri, { idempotent: true });
+  }
+};
 
 export const deletePlant = async (plantId: string) => {
   try {
@@ -32,6 +39,8 @@ export const deletePlant = async (plantId: string) => {
     } else {
       console.warn("Plant file does not exist:", filePath);
     }
+
+    await deleteAllPhotos(plantId);
   } catch (error) {
     console.error("Error deleting plant:", error);
   }
@@ -72,9 +81,6 @@ export const getAllPlants = async () => {
   }
 };
 
-
-
-
 export function createLogBook(plants: Plant[]): LogEntry[] {
   const logs: LogEntry[] = [];
 
@@ -98,4 +104,12 @@ export function createLogBook(plants: Plant[]): LogEntry[] {
   logs.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   return logs;
+}
+
+export const plantFunctions = {
+  getPlantFileUri,
+  getPlantInfo,
+  deletePlant,
+  updatePlant,
+  getAllPlants,
 }

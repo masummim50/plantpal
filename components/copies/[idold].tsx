@@ -6,16 +6,14 @@ import { formatPrettyDate } from "@/functions/Date";
 import { Event, Note, Plant } from "@/interfaces/plantInterface";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import * as FileSystem from "expo-file-system";
-import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
-import { useCallback, useState } from "react";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Keyboard,
-  Modal,
   StyleSheet,
   Text,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   useColorScheme,
   View,
 } from "react-native";
@@ -24,15 +22,16 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const PLANTS_DIR = FileSystem.documentDirectory + "plants/";
 
 export const unstable_settings = {
-  initialRouteName: "Details",
+  initialRouteName: 'Details',
 };
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
+
 
 export default function PlantDetailsScreen() {
   const Tab = createMaterialTopTabNavigator();
   const { id } = useLocalSearchParams();
-  console.log("id from params: ", id);
+  console.log("id from params: ", id)
   const plantId = Array.isArray(id) ? id[0] : id;
   const router = useRouter();
   const colorScheme = useColorScheme();
@@ -40,40 +39,32 @@ export default function PlantDetailsScreen() {
   const [plant, setPlant] = useState<Plant | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // new load plant solution with usefocuseffect
-  useFocusEffect(
-    useCallback(() => {
-      let isActive = true;
 
-      const loadPlant = async () => {
-        try {
-          setLoading(true);
-          const filePath = `${PLANTS_DIR}plant_${id}.json`;
-          const fileInfo = await FileSystem.getInfoAsync(filePath);
-          if (!fileInfo.exists) {
-            console.warn("Plant file not found:", filePath);
-            router.back();
-            return;
-          }
-
-          const content = await FileSystem.readAsStringAsync(filePath);
-          const plantData: Plant = JSON.parse(content);
-          if (isActive) {
-            setPlant(plantData);
-            setLoading(false);
-          }
-        } catch (error) {
-          console.error("Error loading plant:", error);
-        } finally {
-          setLoading(false);
+  useEffect(() => {
+    const loadPlant = async () => {
+      try {
+        const filePath = `${PLANTS_DIR}plant_${id}.json`;
+        const fileInfo = await FileSystem.getInfoAsync(filePath);
+        if (!fileInfo.exists) {
+          console.warn("Plant file not found:", filePath);
+          router.back();
+          return;
         }
-      };
-      loadPlant();
-      return () => {
-        isActive = false;
-      };
-    }, [id])
-  );
+
+        const content = await FileSystem.readAsStringAsync(filePath);
+        const plantData: Plant = JSON.parse(content);
+        setPlant(plantData);
+      } catch (error) {
+        console.error("Error loading plant:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadPlant();
+  }, [id]);
+  
+
   const handleAddEvent = async (event: Event) => {
     if (!plant) return;
 
@@ -196,23 +187,15 @@ export default function PlantDetailsScreen() {
       if (fileInfo.exists) {
         await FileSystem.deleteAsync(filePath);
         console.log("Deleted plant:", filePath);
-        setModalVisible(false);
       } else {
         console.warn("Plant file does not exist:", filePath);
       }
 
-      router.replace("/"); // Navigate back to home screen
+      router.back(); // Navigate back to home screen
     } catch (error) {
       console.error("Error deleting plant:", error);
-      setModalVisible(false);
     }
   };
-
-  const handleDeleteClick = async () => {
-    // show to modal to confirm
-    setModalVisible(true);
-  };
-  const [modalVisible, setModalVisible] = useState(false);
 
   if (loading) {
     return (
@@ -231,8 +214,9 @@ export default function PlantDetailsScreen() {
       </View>
     );
   }
-  // Inside your PlantDetailsScreen component:
+// Inside your PlantDetailsScreen component:
 
+  
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: color.background }}>
       {/* Fixed Header */}
@@ -246,7 +230,7 @@ export default function PlantDetailsScreen() {
           </Text>
         </View>
         <TouchableOpacity
-          onPress={handleDeleteClick}
+          onPress={deletePlant}
           style={{
             backgroundColor: "#cc475a",
             padding: 12,
@@ -256,45 +240,12 @@ export default function PlantDetailsScreen() {
           <Text style={{ color: "#fff", fontWeight: "600" }}>Delete Plant</Text>
         </TouchableOpacity>
       </View>
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)} // Android back button
-      >
-        <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
-          
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalText}>
-              Are you sure you want to delete the plant?
-              {"\n"}This will remove all data associated with the plant
-              permanently.
-            </Text>
-            <View style={styles.modalButtons}>
-              <TouchableOpacity
-                onPress={() => setModalVisible(false)}
-                style={styles.cancelButton}
-              >
-                <Text style={styles.cancelButtonText}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={deletePlant}
-                style={styles.deleteButton}
-              >
-                <Text style={styles.deleteButtonText}>Delete</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-        
-        </TouchableWithoutFeedback>
-      </Modal>
 
       {/* Fixed Tab Bar */}
       <Tab.Navigator
-        key={plantId}
-        initialRouteName="Details"
+      key={plantId}
+  initialRouteName="Details"
+      
         screenOptions={({ route }) => ({
           tabBarStyle: {
             backgroundColor: color.uiBackground,
@@ -308,7 +259,7 @@ export default function PlantDetailsScreen() {
           },
         })}
       >
-        <Tab.Screen name="Details" key={`details-${plantId}`}>
+        <Tab.Screen name="Details" key={`details-${plantId}`} >
           {() => (
             <DetailsTab
               plant={plant}
@@ -320,7 +271,7 @@ export default function PlantDetailsScreen() {
             />
           )}
         </Tab.Screen>
-        <Tab.Screen name="Gallery" key={`gallery-${plantId}`}>
+        <Tab.Screen  name="Gallery" key={`gallery-${plantId}`}>
           {() => <GalleryTab plant={plant} />}
         </Tab.Screen>
       </Tab.Navigator>
@@ -363,55 +314,4 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textAlign: "center",
   },
-  modalOverlay: {
-  flex: 1,
-  backgroundColor: "rgba(0,0,0,0.5)",
-  justifyContent: "center",
-  alignItems: "center",
-},
-modalContent: {
-  backgroundColor: "#fff",
-  borderRadius: 12,
-  padding: 20,
-  width: "85%",
-  shadowColor: "#000",
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.3,
-  shadowRadius: 4,
-  elevation: 5,
-},
-modalText: {
-  fontSize: 16,
-  color: "#333",
-  marginBottom: 20,
-  textAlign: "center",
-},
-modalButtons: {
-  flexDirection: "row",
-  justifyContent: "space-between",
-},
-cancelButton: {
-  flex: 1,
-  backgroundColor: "#ccc",
-  padding: 10,
-  borderRadius: 8,
-  marginRight: 10,
-},
-cancelButtonText: {
-  textAlign: "center",
-  color: "#000",
-  fontWeight: "600",
-},
-deleteButton: {
-  flex: 1,
-  backgroundColor: "#cc475a",
-  padding: 10,
-  borderRadius: 8,
-},
-deleteButtonText: {
-  textAlign: "center",
-  color: "#fff",
-  fontWeight: "600",
-},
-
 });

@@ -92,6 +92,7 @@ export default function PlantEvents({
         value={eventName}
         onChangeText={setEventName}
         placeholder="Custom event"
+        
         placeholderTextColor="#aaa"
         style={[
           styles.input,
@@ -112,6 +113,7 @@ export default function PlantEvents({
         <DateTimePicker
             value={eventDate}
             mode="date"
+            maximumDate={new Date()}
               display="spinner" // or "default"
               onChange={(event, selectedDate) => {
                 setShowPicker(false);

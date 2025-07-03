@@ -1,49 +1,110 @@
 import { Colors } from "@/constants/Colors";
-import { formatPrettyDate, getDaysDifference, isFutureDate } from "@/functions/Date";
+import {
+  formatPrettyDate,
+  getDaysDifference,
+  isFutureDate,
+} from "@/functions/Date";
 import { Event } from "@/interfaces/plantInterface";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
   TouchableOpacity,
   useColorScheme,
-  View
+  View,
 } from "react-native";
 
 export default function EventSection({
   events,
-  handleDeleteEvent
+  handleDeleteEvent,
+  plantedDate
 }: {
   events: Event[];
-  handleDeleteEvent: (id: string) => void
+  handleDeleteEvent: (id: string) => void;
+  plantedDate: string
 }) {
   const theme = useColorScheme();
   const color = theme === "dark" ? Colors.dark : Colors.light;
+
+  const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
+  const toggleSort = () => {
+    setSortOrder(sortOrder === "newest" ? "oldest" : "newest");
+  };
+  function sortEventsByDate(events: Event[], order: "newest" | "oldest") {
+    return [...events].sort((a, b) => {
+      const dateA = new Date(a.date).getTime();
+      const dateB = new Date(b.date).getTime();
+      return order === "newest" ? dateB - dateA : dateA - dateB;
+    });
+  }
+
+
   return (
     <View style={styles.section}>
-      <Text style={[styles.sectionTitle, { color: color.title }]}>Events</Text>
-      {events.map((event, index) => (
-        <EventCard key={index} event={event} handleDeleteEvent={handleDeleteEvent} />
+      <View style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
+        <Text style={[styles.sectionTitle, { color: color.title }]}>
+          Events
+        </Text>
+        <TouchableOpacity onPress={toggleSort} style={styles.toggleButton}>
+          <Ionicons
+            name={sortOrder === "newest" ? "arrow-down" : "arrow-up"}
+            size={18}
+            color={color.iconColor}
+          />
+          <Text style={[styles.toggleText, { color: color.text }]}>
+            {sortOrder === "newest" ? "Newest first" : "Oldest first"}
+          </Text>
+        </TouchableOpacity>
+      </View>
+      {sortEventsByDate([...events], sortOrder).map((event, index) => (
+        <EventCard
+        plantedDate={plantedDate}
+          key={index}
+          event={event}
+          handleDeleteEvent={handleDeleteEvent}
+        />
       ))}
     </View>
   );
 }
 
-const EventCard = ({ event , handleDeleteEvent}: { event: Event, handleDeleteEvent: (id: string) => void }) => {
+const EventCard = ({
+  event,
+  handleDeleteEvent,
+  plantedDate,
+}: {
+  event: Event;
+  handleDeleteEvent: (id: string) => void;
+  plantedDate: string
+}) => {
   const theme = useColorScheme();
   const color = theme === "dark" ? Colors.dark : Colors.light;
   const date = getDaysDifference(new Date(event.date));
   const prettyDate = formatPrettyDate(event.date);
   const futureDate = isFutureDate(event.date);
+  const daysAgo = getDaysDifference(new Date(plantedDate)).time - date.time;
 
   return (
-    <View style={[styles.card, { backgroundColor: color.uiBackground , borderRadius: 6, paddingVertical: 12}]}>
+    <View
+      style={[
+        styles.card,
+        {
+          backgroundColor: color.uiBackground,
+          borderRadius: 6,
+          paddingVertical: 12,
+        },
+      ]}
+    >
       {/* Left Side */}
       <View style={styles.info}>
-        <Text style={{color: color.text, fontSize: 16}}>{event.name}</Text>
-        <Text style={{color: color.text, opacity: 0.7, fontSize: 14}}>
-          {futureDate ? `perform event on ${prettyDate}, in ${date.time} days` : date.time === 0 ? "today" : `in ${date.time} days ago on ${prettyDate}` }
+        <Text style={{ color: color.text, fontSize: 16 }}>{event.name}</Text>
+        <Text style={{ color: color.text, opacity: 0.7, fontSize: 14 }}>
+          {futureDate
+            ? `perform event on ${prettyDate}, in ${date.time} days`
+            : date.time === 0
+            ? "today"
+            : `${date.time} day${date.time > 1 ? "s" : ""} ago on ${prettyDate}`}
         </Text>
 
         {!isFutureDate(event.date) && !event?.completed && (
@@ -54,7 +115,11 @@ const EventCard = ({ event , handleDeleteEvent}: { event: Event, handleDeleteEve
       </View>
 
       {/* Right Side: Delete */}
-      <TouchableOpacity onPress={() => { handleDeleteEvent(event.id)}}>
+      <TouchableOpacity
+        onPress={() => {
+          handleDeleteEvent(event.id);
+        }}
+      >
         <Ionicons name="trash-outline" size={24} color="#cc475a" />
       </TouchableOpacity>
     </View>
@@ -129,5 +194,13 @@ const styles = StyleSheet.create({
   errorText: {
     fontSize: 18,
     textAlign: "center",
+  },
+  toggleButton: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  toggleText: {
+    marginLeft: 6,
+    fontSize: 14,
   },
 });

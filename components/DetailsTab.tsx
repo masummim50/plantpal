@@ -32,6 +32,7 @@ export default function DetailsTab({
 
       {plant.events?.length ? (
         <EventSection
+        plantedDate = {plant.plantedAt}
           events={plant.events}
           handleDeleteEvent={handleDeleteEvent}
         />
