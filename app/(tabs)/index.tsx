@@ -114,7 +114,7 @@ export default function HomeScreen() {
             style={[styles.card, { backgroundColor: themeColors.uiBackground }]}
             onPress={() =>
               router.replace({
-                pathname: "/[id]",
+                pathname: "/[idn]",
                 params: { id: item.id },
               })
             }
