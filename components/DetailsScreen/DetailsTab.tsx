@@ -7,12 +7,12 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableWithoutFeedback,
+  TouchableWithoutFeedback
 } from "react-native";
-import AddNotes from "../AddNotes";
-import EventSection from "../EventSection";
-import NotesSection from "../NotesSection";
-import PlantEvents from "../PlantEvents";
+import AddNotes from "./AddNotes";
+import EventSection from "./EventSection";
+import NotesSection from "./NotesSection";
+import PlantEvents from "./PlantEvents";
 
 const DetailsTab = ({
   plant,
@@ -30,6 +30,7 @@ const DetailsTab = ({
   handleDeleteNote: (id: string) => Promise<void>;
 }) => {
   return (
+    <ScrollView keyboardShouldPersistTaps="handled">
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
@@ -59,13 +60,15 @@ const DetailsTab = ({
           {plant.notes?.length ? (
             <NotesSection notes={plant.notes} onDeleteNote={handleDeleteNote} />
           ) : (
-            <Text style={[styles.itemText, { color: color.text }]}>
+            <Text style={[styles.itemText, { color: color.text,  }]}>
               No notes
             </Text>
           )}
         </ScrollView>
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
+    
+    </ScrollView>
   );
 };
 

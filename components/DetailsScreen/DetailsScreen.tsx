@@ -26,7 +26,7 @@ export const unstable_settings = {
 export const dynamic = "force-dynamic";
 
 export default function DetailsScreen() {
-  const { id } = useLocalSearchParams();
+  const { idn:id } = useLocalSearchParams();
   const plantId = Array.isArray(id) ? id[0] : id;
   const router = useRouter();
   const colorScheme = useColorScheme();

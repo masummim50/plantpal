@@ -90,7 +90,7 @@ export default function HomeScreen() {
         <Text style={[styles.title, { color: themeColors.text }]}>
           🌱 My Garden
         </Text>
-        <TouchableOpacity onPress={toggleSort} style={styles.toggleButton}>
+        <TouchableOpacity onPress={toggleSort} style={[styles.toggleButton, { backgroundColor: themeColors.uiBackground }]}>
           <Ionicons
             name={sortOrder === "newest" ? "arrow-down" : "arrow-up"}
             size={18}
@@ -115,7 +115,7 @@ export default function HomeScreen() {
             onPress={() =>
               router.replace({
                 pathname: "/[idn]",
-                params: { id: item.id },
+                params: { idn: item.id },
               })
             }
           >
@@ -155,6 +155,10 @@ const styles = StyleSheet.create({
   toggleButton: {
     flexDirection: "row",
     alignItems: "center",
+    paddingVertical: 14,
+    paddingHorizontal:8,
+    borderRadius: 20,
+    
   },
   toggleText: {
     marginLeft: 6,

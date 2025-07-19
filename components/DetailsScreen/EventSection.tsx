@@ -116,6 +116,8 @@ const EventCard = ({
 
       {/* Right Side: Delete */}
       <TouchableOpacity
+      style={{
+        backgroundColor: "rgba(255, 0, 0, 0.2)", padding: 6, borderRadius: 6,}}
         onPress={() => {
           handleDeleteEvent(event.id);
         }}

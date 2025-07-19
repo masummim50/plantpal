@@ -51,8 +51,8 @@ export default function TabLayout() {
       <Tabs.Screen name="index" options={{ title: 'Home' }} />
       <Tabs.Screen name="add" options={{ title: 'add' }} />
       <Tabs.Screen name="log" options={{ title: 'log' }} />
-      <Tabs.Screen name="[id]" options={{ title: 'details',href:null }} />
-      <Tabs.Screen name="[idn]" options={{ title: 'new details',href:null }} />
+      {/* <Tabs.Screen name="[id]" options={{ title: 'details',href:null }} /> */}
+      <Tabs.Screen name="[idn]" options={{ title: 'Plant details',href:null }} />
     </Tabs>
   );
 }

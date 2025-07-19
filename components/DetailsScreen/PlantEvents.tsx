@@ -8,6 +8,7 @@ import { Event } from "@/interfaces/plantInterface";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import {
   FlatList,
+  Keyboard,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -40,6 +41,16 @@ export default function PlantEvents({
     setShowModal(false);
   };
 
+  const handleAddClick = ()=> {
+    if(Keyboard.isVisible()){
+      Keyboard.dismiss();
+      setTimeout(()=> {
+        handleAdd()
+      }, 50)
+    }else{
+      handleAdd()
+    }
+  }
   const handleAdd = () => {
     if (!eventName.trim()) return;
 

@@ -1,10 +1,9 @@
 import { Event, Note, Plant } from "@/interfaces/plantInterface";
-import { ScrollView, StyleSheet, Text } from "react-native";
-import AddNotes from "./AddNotes";
-import EventSection from "./EventSection";
-import NotesSection from "./NotesSection";
-import PlantEvents from "./PlantEvents";
-
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import AddNotes from "./DetailsScreen/AddNotes";
+import EventSection from "./DetailsScreen/EventSection";
+import NotesSection from "./DetailsScreen/NotesSection";
+import PlantEvents from "./DetailsScreen/PlantEvents";
 
 export default function DetailsTab({
   plant,
@@ -32,7 +31,7 @@ export default function DetailsTab({
 
       {plant.events?.length ? (
         <EventSection
-        plantedDate = {plant.plantedAt}
+          plantedDate={plant.plantedAt}
           events={plant.events}
           handleDeleteEvent={handleDeleteEvent}
         />
@@ -45,14 +44,15 @@ export default function DetailsTab({
       {plant.notes?.length ? (
         <NotesSection notes={plant.notes} onDeleteNote={handleDeleteNote} />
       ) : (
-        <Text style={[styles.itemText, { color: color.text }]}>No notes</Text>
+        <View style={{minHeight: 300, backgroundColor:'red'}}>
+          <Text style={[styles.itemText, { color: color.text }]}>No notes</Text>
+        </View>
       )}
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  
   scrollTabContent: {
     padding: 16,
   },

@@ -14,26 +14,27 @@ export default function NotesSection({
   notes,
   onDeleteNote,
 }: {
-  notes: Note[],
-  onDeleteNote: (id: string) => void
+  notes: Note[];
+  onDeleteNote: (id: string) => void;
 }) {
   const theme = useColorScheme();
   const color = theme === "dark" ? Colors.dark : Colors.light;
   return (
-    <View
-      style={[
-        styles.section,
-        
-      ]}
-    >
+    <View style={[styles.section]}>
       <Text style={[styles.sectionTitle, { color: color.title }]}>Notes</Text>
       {notes.map((note: Note) => (
-        <View key={note.id} style={[styles.noteCard, { borderBottomWidth: 2, borderBottomColor: color.uiBackground }]}>
+        <View
+          key={note.id}
+          style={[
+            styles.noteCard,
+            { borderBottomWidth: 2, borderBottomColor: color.uiBackground },
+          ]}
+        >
           <Text style={[styles.itemText, { color: color.text, flex: 1 }]}>
             • {note.note}
           </Text>
-          <TouchableOpacity onPress={() => onDeleteNote(note.id)}>
-            <Ionicons name="trash-outline" size={20} color='red' />
+          <TouchableOpacity style={{backgroundColor: "rgba(255, 0, 0, 0.2)", padding: 6, borderRadius: 6,}} onPress={() => onDeleteNote(note.id)}>
+            <Ionicons name="trash-outline" size={20} color="red" />
           </TouchableOpacity>
         </View>
       ))}
@@ -69,7 +70,9 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   section: {
+    minHeight: 300,
     marginTop: 16,
+    marginBottom: 32,
   },
   sectionTitle: {
     fontSize: 20,
