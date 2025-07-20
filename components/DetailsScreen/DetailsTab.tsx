@@ -7,7 +7,8 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
+  View,
 } from "react-native";
 import AddNotes from "./AddNotes";
 import EventSection from "./EventSection";
@@ -31,43 +32,52 @@ const DetailsTab = ({
 }) => {
   return (
     <ScrollView keyboardShouldPersistTaps="handled">
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0} // you can tweak this value
-      >
-        <ScrollView
-          contentContainerStyle={styles.scrollTabContent}
-          keyboardShouldPersistTaps="handled"
-          style={{ backgroundColor: color.background, }}
+      {/* <View style={{height: 100}}>hello</View> */}
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0} // you can tweak this value
         >
-          <PlantEvents onAddEvent={handleAddEvent} />
-          <AddNotes onAddNote={handleAddNote} />
+          <ScrollView
+            contentContainerStyle={styles.scrollTabContent}
+            keyboardShouldPersistTaps="handled"
+            style={{ backgroundColor: color.background }}
+          >
+            <PlantEvents onAddEvent={handleAddEvent} />
+            <AddNotes onAddNote={handleAddNote} />
 
-          {plant.events?.length ? (
-            <EventSection
-              plantedDate={plant.plantedAt}
-              events={plant.events}
-              handleDeleteEvent={handleDeleteEvent}
-            />
-          ) : (
-            <Text style={[styles.itemText, { color: color.text }]}>
-              No events recorded.
-            </Text>
-          )}
+            {plant.events?.length ? (
+              <EventSection
+                plantedDate={plant.plantedAt}
+                events={plant.events}
+                handleDeleteEvent={handleDeleteEvent}
+              />
+            ) : (
+              
+              <View style={{ minHeight: 100, paddingTop:8  }}>
 
-          {plant.notes?.length ? (
-            <NotesSection notes={plant.notes} onDeleteNote={handleDeleteNote} />
-          ) : (
-            <Text style={[styles.itemText, { color: color.text,  }]}>
-              No notes
-            </Text>
-          )}
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </TouchableWithoutFeedback>
-    
+              <Text style={[styles.itemText, { color: color.text , textAlign: "center"}]}>
+                No events recorded.
+              </Text>
+              </View>
+            )}
+
+            {plant.notes?.length ? (
+              <NotesSection
+                notes={plant.notes}
+                onDeleteNote={handleDeleteNote}
+              />
+            ) : (
+              <View style={{ minHeight: 300,  paddingTop: 8}}>
+                <Text style={[styles.itemText, { color: color.text, textAlign: "center" }]}>
+                  No notes Added
+                </Text>
+              </View>
+            )}
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
     </ScrollView>
   );
 };

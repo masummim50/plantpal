@@ -45,7 +45,7 @@ export default function DetailsTab({
         <NotesSection notes={plant.notes} onDeleteNote={handleDeleteNote} />
       ) : (
         <View style={{minHeight: 300, backgroundColor:'red'}}>
-          <Text style={[styles.itemText, { color: color.text }]}>No notes</Text>
+          <Text style={[styles.itemText, { color: color.text }]}>No notes yet</Text>
         </View>
       )}
     </ScrollView>

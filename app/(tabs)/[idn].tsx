@@ -3,10 +3,7 @@ import React from "react";
 import { StyleSheet } from "react-native";
 
 const Details = () => {
-  return (
-    
-      <DetailsScreen />
-  );
+  return <DetailsScreen />;
 };
 
 export default Details;

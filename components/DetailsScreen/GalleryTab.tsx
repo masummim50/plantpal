@@ -23,6 +23,10 @@ const GalleryTab = ({ plant }: { plant: Plant }) => {
   const [photos, setPhotos] = useState<PhotoMeta[]>([]);
   const [currentplant, setCurrentplant] = useState<string | null>(null);
 
+  const [isViewerVisible, setViewerVisible] = React.useState(false);
+  const [currentIndex, setCurrentIndex] = React.useState(0);
+  
+  const [indexForText, setIndexForText] = React.useState(0);
   useFocusEffect(
     useCallback(() => {
       let isActive = true;
@@ -47,8 +51,6 @@ const GalleryTab = ({ plant }: { plant: Plant }) => {
     }, [plant.id, plant.plantedAt])
   );
 
-  const [isViewerVisible, setViewerVisible] = React.useState(false);
-  const [currentIndex, setCurrentIndex] = React.useState(0);
 
   // const toggleSort = () => setSortNewestFirst(!sortNewestFirst);
   const toggleView = () => setViewMode(viewMode === "list" ? "grid" : "list");
@@ -76,11 +78,13 @@ const GalleryTab = ({ plant }: { plant: Plant }) => {
   };
   const handleTakePhoto = async () => {
     await GalleryFunctions.takePhoto(plant.id, plant.plantedAt);
-    const loadedPhotos = await GalleryFunctions.loadPhotos(plant.id, plant.plantedAt);
+    const loadedPhotos = await GalleryFunctions.loadPhotos(
+      plant.id,
+      plant.plantedAt
+    );
     setPhotos(loadedPhotos);
   };
 
-  const [indexForText, setIndexForText] = React.useState(0);
   return (
     <View style={[styles.container, { backgroundColor: color.background }]}>
       {/* to sort images */}
@@ -91,7 +95,15 @@ const GalleryTab = ({ plant }: { plant: Plant }) => {
           Loading photos...
         </Text>
       ) : (
-        <PhotoFlatList photos={photos} onPhotoPress={onPhotoPress} numColumns={numColumns} viewMode="grid" plantId={plant.id} plantedAt={plant.plantedAt} setPhotos={setPhotos} />
+        <PhotoFlatList
+          photos={photos}
+          onPhotoPress={onPhotoPress}
+          numColumns={numColumns}
+          viewMode="grid"
+          plantId={plant.id}
+          plantedAt={plant.plantedAt}
+          setPhotos={setPhotos}
+        />
       )}
 
       <TouchableOpacity
@@ -113,11 +125,13 @@ const GalleryTab = ({ plant }: { plant: Plant }) => {
           <>
             <View style={styles.overlayTopLeft}>
               <Text style={styles.overlayText}>
-                {photos[indexForText].daysAgo === 0
-                  ? "Today"
-                  : photos[indexForText].daysAgo === 1
-                  ? "Yesterday"
-                  : `${photos[indexForText].daysAgo} days ago`}
+                {photos[indexForText]
+                  ? photos[indexForText].daysAgo === 0
+                    ? "Today"
+                    : photos[indexForText].daysAgo === 1
+                    ? "Yesterday"
+                    : `${photos[indexForText].daysAgo} days ago`
+                  : null}
               </Text>
             </View>
 

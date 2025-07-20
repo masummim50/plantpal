@@ -117,7 +117,7 @@ export default function AddPlantScreen() {
             </View>
 
             <Text style={{ color: themeColors.text, marginTop: 8 }}>
-              Selected: {plantedAt.toDateString()}
+              Selected: {plantedAt.toDateString() === new Date().toDateString() ? "Today" : plantedAt.toDateString()}
             </Text>
           </View>
 

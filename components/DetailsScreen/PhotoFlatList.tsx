@@ -1,6 +1,13 @@
 import { Colors } from "@/constants/Colors";
 import React from "react";
-import { FlatList, StyleSheet, Text, TouchableOpacity, useColorScheme, View } from "react-native";
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  useColorScheme,
+  View,
+} from "react-native";
 import { PhotoMeta } from "../Gallery/GalleryFunctions";
 import PhotoItem from "../Gallery/PhotoItem";
 
@@ -11,7 +18,7 @@ const PhotoFlatList = ({
   onPhotoPress,
   plantId,
   plantedAt,
-  setPhotos
+  setPhotos,
 }: {
   photos: PhotoMeta[];
   numColumns: number;
@@ -19,11 +26,10 @@ const PhotoFlatList = ({
   onPhotoPress: (index: number) => void;
   plantId: string;
   plantedAt: string;
-  setPhotos: React.Dispatch<React.SetStateAction<PhotoMeta[]>>
+  setPhotos: React.Dispatch<React.SetStateAction<PhotoMeta[]>>;
 }) => {
-    
-      const theme = useColorScheme();
-      const color = theme === "dark" ? Colors.dark : Colors.light;
+  const theme = useColorScheme();
+  const color = theme === "dark" ? Colors.dark : Colors.light;
   return (
     <FlatList
       data={photos}
@@ -68,4 +74,5 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 32,
     fontSize: 16,
-  },});
+  },
+});

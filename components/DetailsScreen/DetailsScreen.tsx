@@ -34,6 +34,7 @@ export default function DetailsScreen() {
   const [plant, setPlant] = useState<Plant | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const [modalVisible, setModalVisible] = useState(false);
   // new load plant solution with usefocuseffect
   useFocusEffect(
     useCallback(() => {
@@ -206,7 +207,6 @@ export default function DetailsScreen() {
     // show to modal to confirm
     setModalVisible(true);
   };
-  const [modalVisible, setModalVisible] = useState(false);
 
   if (loading) {
     return (

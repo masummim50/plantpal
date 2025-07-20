@@ -3,9 +3,11 @@ import { formatPrettyDate, getDaysDifference } from "@/functions/Date";
 import { Plant } from "@/interfaces/plantInterface";
 import React from "react";
 import {
+  Keyboard,
   StyleSheet,
   Text,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   useColorScheme,
   View,
 } from "react-native";
@@ -21,27 +23,35 @@ const PlantInfo = ({
   const color = Colors[colorScheme ?? "light"];
   const daysAgo = getDaysDifference(new Date(plant.plantedAt)).time;
   return (
-    <View style={styles.headerContainer}>
-      <View style={styles.leftContent}>
-        <Text style={[styles.title, { color: color.title }]}>{plant.name}</Text>
-        <Text style={[styles.subtitle, { color: color.text }]}>
-          Planted on {formatPrettyDate(plant.plantedAt)}
-        </Text>
-        <Text style={[styles.subtitle, { color: color.text }]}>
-          {daysAgo === 0 ? "Today" : daysAgo === 1 ? "Yesterday" : `${daysAgo} days ago`}
-        </Text>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.headerContainer}>
+        <View style={styles.leftContent}>
+          <Text style={[styles.title, { color: color.title }]}>
+            {plant.name}
+          </Text>
+          <Text style={[styles.subtitle, { color: color.text }]}>
+            Planted on {formatPrettyDate(plant.plantedAt)}
+          </Text>
+          <Text style={[styles.subtitle, { color: color.text }]}>
+            {daysAgo === 0
+              ? "Today"
+              : daysAgo === 1
+              ? "Yesterday"
+              : `${daysAgo} days ago`}
+          </Text>
+        </View>
+        <TouchableOpacity
+          onPress={handleDeleteClick}
+          style={{
+            backgroundColor: "#cc475a",
+            padding: 12,
+            borderRadius: 8,
+          }}
+        >
+          <Text style={{ color: "#fff", fontWeight: "600" }}>Delete Plant</Text>
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity
-        onPress={handleDeleteClick}
-        style={{
-          backgroundColor: "#cc475a",
-          padding: 12,
-          borderRadius: 8,
-        }}
-      >
-        <Text style={{ color: "#fff", fontWeight: "600" }}>Delete Plant</Text>
-      </TouchableOpacity>
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -55,10 +65,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-  },leftContent: {
-    flex: 1,             // allow to grow
-    flexShrink: 1,       // allow to shrink if needed
-    paddingRight: 10,    // give space from delete button
+  },
+  leftContent: {
+    flex: 1, // allow to grow
+    flexShrink: 1, // allow to shrink if needed
+    paddingRight: 10, // give space from delete button
   },
   title: {
     fontSize: 26,
