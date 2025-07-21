@@ -1,8 +1,7 @@
 import { Colors } from "@/constants/Colors";
 import { Plant } from "@/interfaces/plantInterface";
 import { Ionicons } from "@expo/vector-icons";
-import { useFocusEffect } from "expo-router";
-import React, { useCallback, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -12,6 +11,7 @@ import {
 } from "react-native";
 
 import EnhancedImageViewing from "react-native-image-viewing";
+import { ImageSource } from "react-native-image-viewing/dist/@types";
 import { GalleryFunctions, PhotoMeta } from "../Gallery/GalleryFunctions";
 import GallerySortingBar from "./GallerySortingBar";
 import PhotoFlatList from "./PhotoFlatList";
@@ -27,49 +27,28 @@ const GalleryTab = ({ plant }: { plant: Plant }) => {
 
   const [isViewerVisible, setViewerVisible] = React.useState(false);
   const [currentIndex, setCurrentIndex] = React.useState(0);
-  
 
   const [indexForText, setIndexForText] = React.useState(0);
+  const [images, setImages] = React.useState<ImageSource[]>([]);
 
-  useFocusEffect(
-    useCallback(() => {
-      let isActive = true;
+  useEffect(() => {
+    setPhotosLoading(true);
+    GalleryFunctions.loadPhotos(plant.id, plant.plantedAt, "useeffect fetching photos").then((photos) => {
+      setPhotos(photos);
+      setPhotosLoading(false);
+    });
+  }, [plant.id, plant.plantedAt]);
 
-      const loadPhotos = async () => {
-        try {
-          setPhotosLoading(true);
-          const loadedPhotos = await GalleryFunctions.loadPhotos(
-            plant.id,
-            plant.plantedAt
-          );
-          if (isActive) {
-            setPhotos(loadedPhotos);
-          }
-        } catch (error) {
-          console.error("Failed to load photos:", error);
-        } finally {
-          if (isActive) {
-            setPhotosLoading(false);
-          }
-        }
-      };
-
-      loadPhotos();
-
-      return () => {
-        isActive = false;
-      };
-    }, [plant.id, plant.plantedAt])
-  );
+  useEffect(() => {
+    setImages(photos.map((photo) => ({ uri: photo.uri })));
+  }, [photos]);
 
   const toggleSort = () => setSortNewestFirst(!sortNewestFirst);
 
   const toggleView = () => setViewMode(viewMode === "list" ? "grid" : "list");
 
   const numColumns = viewMode === "grid" ? 2 : 1;
-  const images = photos.map((photo) => {
-    return { uri: photo.uri };
-  });
+ 
 
   const onPhotoPress = (index: number) => {
     setCurrentIndex(index);
@@ -82,7 +61,8 @@ const GalleryTab = ({ plant }: { plant: Plant }) => {
       await GalleryFunctions.deletePhoto(photoToDelete.uri);
       const loadedPhotos = await GalleryFunctions.loadPhotos(
         plant.id,
-        plant.plantedAt
+        plant.plantedAt,
+        "handle delete photo"
       );
       setPhotos(loadedPhotos);
     }
@@ -91,7 +71,8 @@ const GalleryTab = ({ plant }: { plant: Plant }) => {
     await GalleryFunctions.takePhoto(plant.id, plant.plantedAt);
     const loadedPhotos = await GalleryFunctions.loadPhotos(
       plant.id,
-      plant.plantedAt
+      plant.plantedAt,
+      "handleTakephoto"
     );
     setPhotos(loadedPhotos);
   };
@@ -125,7 +106,7 @@ const GalleryTab = ({ plant }: { plant: Plant }) => {
       </TouchableOpacity>
 
       {/* the image view component is below */}
-<EnhancedImageViewing
+      <EnhancedImageViewing
         images={images}
         imageIndex={currentIndex}
         visible={isViewerVisible}

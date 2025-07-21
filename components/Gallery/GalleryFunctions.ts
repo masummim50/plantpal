@@ -22,8 +22,8 @@ const ensureFolderExists = async (folderUri: string) => {
   }
 };
 
-const loadPhotos = async (plantId: string, plantedAt: string): Promise<PhotoMeta[]> => {
-  console.log("load photos function starting with id: ", plantId);
+const loadPhotos = async (plantId: string, plantedAt: string, whereto:string="default"): Promise<PhotoMeta[]> => {
+  console.log("load photos function starting with id: ", plantId, "coming from: ", whereto);
   // get folder uri
   const folderUri = getFolderUri(plantId);
   await ensureFolderExists(folderUri);
@@ -67,7 +67,7 @@ const takePhoto = async (plantId: string, plantedAt: string) => {
     const dest = `${folderUri}/${filename}`;
     await ensureFolderExists(folderUri);
     await FileSystem.copyAsync({ from: asset.uri, to: dest });
-    await loadPhotos(plantId, plantedAt); // refresh
+    // await loadPhotos(plantId, plantedAt); // refresh
   }
 };
 
