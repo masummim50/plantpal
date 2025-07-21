@@ -11,6 +11,7 @@ import {
   View,
 } from "react-native";
 
+import EnhancedImageViewing from "react-native-image-viewing";
 import { GalleryFunctions, PhotoMeta } from "../Gallery/GalleryFunctions";
 import GallerySortingBar from "./GallerySortingBar";
 import PhotoFlatList from "./PhotoFlatList";
@@ -22,23 +23,34 @@ const GalleryTab = ({ plant }: { plant: Plant }) => {
   const [photosLoading, setPhotosLoading] = useState(true);
   const [photos, setPhotos] = useState<PhotoMeta[]>([]);
   const [sortNewestFirst, setSortNewestFirst] = useState(true);
+  const [currentplant, setCurrentplant] = useState<string | null>(null);
 
+  const [isViewerVisible, setViewerVisible] = React.useState(false);
   const [currentIndex, setCurrentIndex] = React.useState(0);
+  
 
+  const [indexForText, setIndexForText] = React.useState(0);
 
   useFocusEffect(
     useCallback(() => {
       let isActive = true;
 
       const loadPhotos = async () => {
-        setPhotosLoading(true);
-        const loadedPhotos = await GalleryFunctions.loadPhotos(
-          plant.id,
-          plant.plantedAt
-        );
-        if (isActive) {
-          setPhotos(loadedPhotos);
-          setPhotosLoading(false);
+        try {
+          setPhotosLoading(true);
+          const loadedPhotos = await GalleryFunctions.loadPhotos(
+            plant.id,
+            plant.plantedAt
+          );
+          if (isActive) {
+            setPhotos(loadedPhotos);
+          }
+        } catch (error) {
+          console.error("Failed to load photos:", error);
+        } finally {
+          if (isActive) {
+            setPhotosLoading(false);
+          }
         }
       };
 
@@ -55,6 +67,9 @@ const GalleryTab = ({ plant }: { plant: Plant }) => {
   const toggleView = () => setViewMode(viewMode === "list" ? "grid" : "list");
 
   const numColumns = viewMode === "grid" ? 2 : 1;
+  const images = photos.map((photo) => {
+    return { uri: photo.uri };
+  });
 
   const onPhotoPress = (index: number) => {
     setCurrentIndex(index);
@@ -80,10 +95,6 @@ const GalleryTab = ({ plant }: { plant: Plant }) => {
     );
     setPhotos(loadedPhotos);
   };
-
-
-
-
 
   return (
     <View style={[styles.container, { backgroundColor: color.background }]}>
@@ -114,8 +125,45 @@ const GalleryTab = ({ plant }: { plant: Plant }) => {
       </TouchableOpacity>
 
       {/* the image view component is below */}
+<EnhancedImageViewing
+        images={images}
+        imageIndex={currentIndex}
+        visible={isViewerVisible}
+        onImageIndexChange={(index) => setIndexForText(index)}
+        onRequestClose={() => setViewerVisible(false)}
+        swipeToCloseEnabled
+        HeaderComponent={() => (
+          <>
+            <View style={styles.overlayTopLeft}>
+              <Text style={styles.overlayText}>
+                {photos[indexForText]
+                  ? photos[indexForText].daysAgo === 0
+                    ? "Today"
+                    : photos[indexForText].daysAgo === 1
+                    ? "Yesterday"
+                    : `${photos[indexForText].daysAgo} days ago`
+                  : null}
+              </Text>
+            </View>
 
-      
+            <TouchableOpacity
+              onPress={() => setViewerVisible(false)}
+              style={styles.overlayTopRight}
+            >
+              <Ionicons name="close" size={28} color="#fff" />
+            </TouchableOpacity>
+          </>
+        )}
+        FooterComponent={() => (
+          <TouchableOpacity
+            onPress={handleDeleteFromViewer}
+            style={styles.overlayBottomRight}
+          >
+            <Ionicons name="trash" size={28} color="#fff" />
+          </TouchableOpacity>
+        )}
+      />
+      {/* end of it */}
     </View>
   );
 };

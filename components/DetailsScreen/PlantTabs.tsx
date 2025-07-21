@@ -4,7 +4,7 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import React from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet, useColorScheme } from "react-native";
 import DetailsTab from "./DetailsTab";
-import GalleryTabNew from "./GalleryTabNew";
+import GalleryTab from "./GalleryTab";
 
 const PlantTabs = ({
   plant,
@@ -58,7 +58,7 @@ const PlantTabs = ({
           )}
         </Tab.Screen>
         <Tab.Screen name="Gallery" key={`gallery-${plant.id}`}>
-          {() => <GalleryTabNew plant={plant} />}
+          {() => <GalleryTab plant={plant} />}
         </Tab.Screen>
       </Tab.Navigator>
     </KeyboardAvoidingView>
