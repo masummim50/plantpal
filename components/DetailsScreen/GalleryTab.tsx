@@ -10,7 +10,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import EnhancedImageViewing from "react-native-image-viewing";
+
 import { GalleryFunctions, PhotoMeta } from "../Gallery/GalleryFunctions";
 import GallerySortingBar from "./GallerySortingBar";
 import PhotoFlatList from "./PhotoFlatList";
@@ -21,13 +21,10 @@ const GalleryTab = ({ plant }: { plant: Plant }) => {
   const [viewMode, setViewMode] = useState<"list" | "grid">("grid");
   const [photosLoading, setPhotosLoading] = useState(true);
   const [photos, setPhotos] = useState<PhotoMeta[]>([]);
-  const [currentplant, setCurrentplant] = useState<string | null>(null);
   const [sortNewestFirst, setSortNewestFirst] = useState(true);
 
-  const [isViewerVisible, setViewerVisible] = React.useState(false);
   const [currentIndex, setCurrentIndex] = React.useState(0);
 
-  const [indexForText, setIndexForText] = React.useState(0);
 
   useFocusEffect(
     useCallback(() => {
@@ -51,36 +48,7 @@ const GalleryTab = ({ plant }: { plant: Plant }) => {
         isActive = false;
       };
     }, [plant.id, plant.plantedAt])
-
   );
-
-  // new chatgpt solution:
-
-  // const isFocused = useIsFocused();
-
-  // useEffect(() => {
-  //   if (!isFocused) return;
-
-  //   let isActive = true;
-
-  //   const loadPhotos = async () => {
-  //     setPhotosLoading(true);
-  //     const loadedPhotos = await GalleryFunctions.loadPhotos(
-  //       plant.id,
-  //       plant.plantedAt
-  //     );
-  //     if (isActive) {
-  //       setPhotos(loadedPhotos);
-  //       setPhotosLoading(false);
-  //     }
-  //   };
-
-  //   loadPhotos();
-
-  //   return () => {
-  //     isActive = false;
-  //   };
-  // }, [isFocused, plant.id, plant.plantedAt]);
 
   const toggleSort = () => setSortNewestFirst(!sortNewestFirst);
 
@@ -88,10 +56,8 @@ const GalleryTab = ({ plant }: { plant: Plant }) => {
 
   const numColumns = viewMode === "grid" ? 2 : 1;
 
-  const images = photos.map((p) => ({ uri: p.uri }));
   const onPhotoPress = (index: number) => {
     setCurrentIndex(index);
-    setViewerVisible(true);
   };
 
   const handleDeleteFromViewer = async () => {
@@ -99,7 +65,6 @@ const GalleryTab = ({ plant }: { plant: Plant }) => {
     if (photoToDelete) {
       console.log(photoToDelete.uri);
       await GalleryFunctions.deletePhoto(photoToDelete.uri);
-      setViewerVisible(false);
       const loadedPhotos = await GalleryFunctions.loadPhotos(
         plant.id,
         plant.plantedAt
@@ -115,6 +80,10 @@ const GalleryTab = ({ plant }: { plant: Plant }) => {
     );
     setPhotos(loadedPhotos);
   };
+
+
+
+
 
   return (
     <View style={[styles.container, { backgroundColor: color.background }]}>
@@ -146,44 +115,7 @@ const GalleryTab = ({ plant }: { plant: Plant }) => {
 
       {/* the image view component is below */}
 
-      <EnhancedImageViewing
-        images={images}
-        imageIndex={currentIndex}
-        visible={isViewerVisible}
-        onImageIndexChange={(index) => setIndexForText(index)}
-        onRequestClose={() => setViewerVisible(false)}
-        swipeToCloseEnabled
-        HeaderComponent={() => (
-          <>
-            <View style={styles.overlayTopLeft}>
-              <Text style={styles.overlayText}>
-                {photos[indexForText]
-                  ? photos[indexForText].daysAgo === 0
-                    ? "Today"
-                    : photos[indexForText].daysAgo === 1
-                    ? "Yesterday"
-                    : `${photos[indexForText].daysAgo} days ago`
-                  : null}
-              </Text>
-            </View>
-
-            <TouchableOpacity
-              onPress={() => setViewerVisible(false)}
-              style={styles.overlayTopRight}
-            >
-              <Ionicons name="close" size={28} color="#fff" />
-            </TouchableOpacity>
-          </>
-        )}
-        FooterComponent={() => (
-          <TouchableOpacity
-            onPress={handleDeleteFromViewer}
-            style={styles.overlayBottomRight}
-          >
-            <Ionicons name="trash" size={28} color="#fff" />
-          </TouchableOpacity>
-        )}
-      />
+      
     </View>
   );
 };

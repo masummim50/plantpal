@@ -35,7 +35,12 @@
           "backgroundColor": "#DBFFEE"
         }
       ],
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "expo-dev-client", {
+          "launchMode": "most-recent"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
