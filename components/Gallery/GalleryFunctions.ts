@@ -23,7 +23,7 @@ const ensureFolderExists = async (folderUri: string) => {
 };
 
 const loadPhotos = async (plantId: string, plantedAt: string): Promise<PhotoMeta[]> => {
-  console.log("load photos function starting");
+  console.log("load photos function starting with id: ", plantId);
   // get folder uri
   const folderUri = getFolderUri(plantId);
   await ensureFolderExists(folderUri);

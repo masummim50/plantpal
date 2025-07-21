@@ -59,6 +59,7 @@ const PlantTabs = ({
         </Tab.Screen>
         <Tab.Screen name="Gallery" key={`gallery-${plant.id}`}>
           {() => <GalleryTab plant={plant} />}
+          {/* {() => <GalleryTabNew plant={plant} />} */}
         </Tab.Screen>
       </Tab.Navigator>
     </KeyboardAvoidingView>

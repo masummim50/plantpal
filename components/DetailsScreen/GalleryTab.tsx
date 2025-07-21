@@ -22,11 +22,13 @@ const GalleryTab = ({ plant }: { plant: Plant }) => {
   const [photosLoading, setPhotosLoading] = useState(true);
   const [photos, setPhotos] = useState<PhotoMeta[]>([]);
   const [currentplant, setCurrentplant] = useState<string | null>(null);
+  const [sortNewestFirst, setSortNewestFirst] = useState(true);
 
   const [isViewerVisible, setViewerVisible] = React.useState(false);
   const [currentIndex, setCurrentIndex] = React.useState(0);
-  
+
   const [indexForText, setIndexForText] = React.useState(0);
+
   useFocusEffect(
     useCallback(() => {
       let isActive = true;
@@ -49,10 +51,39 @@ const GalleryTab = ({ plant }: { plant: Plant }) => {
         isActive = false;
       };
     }, [plant.id, plant.plantedAt])
+
   );
 
+  // new chatgpt solution:
 
-  // const toggleSort = () => setSortNewestFirst(!sortNewestFirst);
+  // const isFocused = useIsFocused();
+
+  // useEffect(() => {
+  //   if (!isFocused) return;
+
+  //   let isActive = true;
+
+  //   const loadPhotos = async () => {
+  //     setPhotosLoading(true);
+  //     const loadedPhotos = await GalleryFunctions.loadPhotos(
+  //       plant.id,
+  //       plant.plantedAt
+  //     );
+  //     if (isActive) {
+  //       setPhotos(loadedPhotos);
+  //       setPhotosLoading(false);
+  //     }
+  //   };
+
+  //   loadPhotos();
+
+  //   return () => {
+  //     isActive = false;
+  //   };
+  // }, [isFocused, plant.id, plant.plantedAt]);
+
+  const toggleSort = () => setSortNewestFirst(!sortNewestFirst);
+
   const toggleView = () => setViewMode(viewMode === "list" ? "grid" : "list");
 
   const numColumns = viewMode === "grid" ? 2 : 1;
@@ -99,7 +130,7 @@ const GalleryTab = ({ plant }: { plant: Plant }) => {
           photos={photos}
           onPhotoPress={onPhotoPress}
           numColumns={numColumns}
-          viewMode="grid"
+          viewMode={viewMode}
           plantId={plant.id}
           plantedAt={plant.plantedAt}
           setPhotos={setPhotos}
@@ -114,6 +145,7 @@ const GalleryTab = ({ plant }: { plant: Plant }) => {
       </TouchableOpacity>
 
       {/* the image view component is below */}
+
       <EnhancedImageViewing
         images={images}
         imageIndex={currentIndex}
