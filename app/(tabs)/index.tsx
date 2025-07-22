@@ -88,7 +88,7 @@ export default function HomeScreen() {
     >
       <View style={styles.header}>
         <Text style={[styles.title, { color: themeColors.text }]}>
-          🌱 My Garden switching to useeffect
+          🌱 My Garden
         </Text>
         <TouchableOpacity onPress={toggleSort} style={[styles.toggleButton, { backgroundColor: themeColors.uiBackground }]}>
           <Ionicons
