@@ -1,6 +1,6 @@
 import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
-import { useState } from "react";
+
 
 export type PhotoMeta = {
   uri: string;
@@ -13,7 +13,6 @@ const getFolderUri = (plantId: string) => {
   return `${FileSystem.documentDirectory}${plantId}_images`;
 };
 
-const [viewMode, setViewMode] = useState<"list" | "grid">("grid");
 
 const ensureFolderExists = async (folderUri: string) => {
   const folderInfo = await FileSystem.getInfoAsync(folderUri);
