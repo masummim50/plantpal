@@ -1,7 +1,7 @@
 import { Colors } from "@/constants/Colors";
 import { Plant } from "@/interfaces/plantInterface";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   StyleSheet,
   Text,
@@ -10,63 +10,13 @@ import {
   View,
 } from "react-native";
 
-import EnhancedImageViewing from "react-native-image-viewing";
-import { ImageSource } from "react-native-image-viewing/dist/@types";
 import { GalleryFunctions, PhotoMeta } from "../Gallery/GalleryFunctions";
-import GallerySortingBar from "./GallerySortingBar";
-import PhotoFlatList from "./PhotoFlatList";
 
-const GalleryTab = ({ plant }: { plant: Plant }) => {
+const GalleryTab = ({ plant, photos, setPhotos }: { plant: Plant, photos: PhotoMeta[], setPhotos: React.Dispatch<React.SetStateAction<PhotoMeta[]>> }) => {
   const theme = useColorScheme();
   const color = theme === "dark" ? Colors.dark : Colors.light;
-  const [viewMode, setViewMode] = useState<"list" | "grid">("grid");
-  const [photosLoading, setPhotosLoading] = useState(true);
-  const [photos, setPhotos] = useState<PhotoMeta[]>([]);
-  const [sortNewestFirst, setSortNewestFirst] = useState(true);
-  const [currentplant, setCurrentplant] = useState<string | null>(null);
 
-  const [isViewerVisible, setViewerVisible] = React.useState(false);
-  const [currentIndex, setCurrentIndex] = React.useState(0);
-
-  const [indexForText, setIndexForText] = React.useState(0);
-  const [images, setImages] = React.useState<ImageSource[]>([]);
-
-  useEffect(() => {
-    setPhotosLoading(true);
-    GalleryFunctions.loadPhotos(plant.id, plant.plantedAt, "useeffect fetching photos").then((photos) => {
-      setPhotos(photos);
-      setPhotosLoading(false);
-    });
-  }, [plant.id, plant.plantedAt]);
-
-  useEffect(() => {
-    setImages(photos.map((photo) => ({ uri: photo.uri })));
-  }, [photos]);
-
-  const toggleSort = () => setSortNewestFirst(!sortNewestFirst);
-
-  const toggleView = () => setViewMode(viewMode === "list" ? "grid" : "list");
-
-  const numColumns = viewMode === "grid" ? 2 : 1;
  
-
-  const onPhotoPress = (index: number) => {
-    setCurrentIndex(index);
-  };
-
-  const handleDeleteFromViewer = async () => {
-    const photoToDelete = photos[currentIndex];
-    if (photoToDelete) {
-      console.log(photoToDelete.uri);
-      await GalleryFunctions.deletePhoto(photoToDelete.uri);
-      const loadedPhotos = await GalleryFunctions.loadPhotos(
-        plant.id,
-        plant.plantedAt,
-        "handle delete photo"
-      );
-      setPhotos(loadedPhotos);
-    }
-  };
   const handleTakePhoto = async () => {
     await GalleryFunctions.takePhoto(plant.id, plant.plantedAt);
     const loadedPhotos = await GalleryFunctions.loadPhotos(
@@ -80,23 +30,10 @@ const GalleryTab = ({ plant }: { plant: Plant }) => {
   return (
     <View style={[styles.container, { backgroundColor: color.background }]}>
       {/* to sort images */}
-      <GallerySortingBar viewMode={viewMode} toggleView={toggleView} />
 
-      {photosLoading ? (
-        <Text style={[styles.emptyText, { color: color.text }]}>
-          Loading photos...
-        </Text>
-      ) : (
-        <PhotoFlatList
-          photos={photos}
-          onPhotoPress={onPhotoPress}
-          numColumns={numColumns}
-          viewMode={viewMode}
-          plantId={plant.id}
-          plantedAt={plant.plantedAt}
-          setPhotos={setPhotos}
-        />
-      )}
+      
+        <Text>photos loaded: {photos.length}</Text>
+      
 
       <TouchableOpacity
         onPress={handleTakePhoto}
@@ -104,47 +41,6 @@ const GalleryTab = ({ plant }: { plant: Plant }) => {
       >
         <Ionicons name="camera" size={24} color="#fff" />
       </TouchableOpacity>
-
-      {/* the image view component is below */}
-      <EnhancedImageViewing
-        images={images}
-        imageIndex={currentIndex}
-        visible={isViewerVisible}
-        onImageIndexChange={(index) => setIndexForText(index)}
-        onRequestClose={() => setViewerVisible(false)}
-        swipeToCloseEnabled
-        HeaderComponent={() => (
-          <>
-            <View style={styles.overlayTopLeft}>
-              <Text style={styles.overlayText}>
-                {photos[indexForText]
-                  ? photos[indexForText].daysAgo === 0
-                    ? "Today"
-                    : photos[indexForText].daysAgo === 1
-                    ? "Yesterday"
-                    : `${photos[indexForText].daysAgo} days ago`
-                  : null}
-              </Text>
-            </View>
-
-            <TouchableOpacity
-              onPress={() => setViewerVisible(false)}
-              style={styles.overlayTopRight}
-            >
-              <Ionicons name="close" size={28} color="#fff" />
-            </TouchableOpacity>
-          </>
-        )}
-        FooterComponent={() => (
-          <TouchableOpacity
-            onPress={handleDeleteFromViewer}
-            style={styles.overlayBottomRight}
-          >
-            <Ionicons name="trash" size={28} color="#fff" />
-          </TouchableOpacity>
-        )}
-      />
-      {/* end of it */}
     </View>
   );
 };

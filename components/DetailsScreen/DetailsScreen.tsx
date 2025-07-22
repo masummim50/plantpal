@@ -14,6 +14,7 @@ import {
   useColorScheme,
   View
 } from "react-native";
+import { GalleryFunctions, PhotoMeta } from "../Gallery/GalleryFunctions";
 import PlantInfo from "./PlantInfo";
 import PlantTabs from "./PlantTabs";
 
@@ -33,6 +34,7 @@ export default function DetailsScreen() {
   const color = Colors[colorScheme ?? "light"];
   const [plant, setPlant] = useState<Plant | null>(null);
   const [loading, setLoading] = useState(true);
+  const [photos, setPhotos] = useState<PhotoMeta[]>([]);
 
   const [modalVisible, setModalVisible] = useState(false);
   // new load plant solution with usefocuseffect
@@ -53,8 +55,11 @@ export default function DetailsScreen() {
 
           const content = await FileSystem.readAsStringAsync(filePath);
           const plantData: Plant = JSON.parse(content);
+          const loadedPhotos = await GalleryFunctions.loadPhotos(plantData.id, plantData.plantedAt, "usefocuseffectdetailscreen");
+
           if (isActive) {
             setPlant(plantData);
+            setPhotos(loadedPhotos);
             setLoading(false);
           }
         } catch (error) {
@@ -273,6 +278,8 @@ export default function DetailsScreen() {
         handleDeleteEvent={handleDeleteEvent}
         handleAddNote={handleAddNote}
         handleDeleteNote={handleDeleteNote}
+        photos={photos}
+        setPhotos={setPhotos}
       />
       
       </View>

@@ -3,6 +3,7 @@ import { Event, Note, Plant } from "@/interfaces/plantInterface";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import React from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet, useColorScheme } from "react-native";
+import { PhotoMeta } from "../Gallery/GalleryFunctions";
 import DetailsTab from "./DetailsTab";
 import GalleryTab from "./GalleryTab";
 
@@ -12,12 +13,16 @@ const PlantTabs = ({
   handleAddNote,
   handleDeleteEvent,
   handleDeleteNote,
+  photos,
+  setPhotos
 }: {
   plant: Plant;
   handleAddEvent: (event: Event) => Promise<void>;
   handleAddNote: (note: Note) => Promise<void>;
   handleDeleteEvent: (id: string) => Promise<void>;
   handleDeleteNote: (id: string) => Promise<void>;
+  photos: PhotoMeta[];
+  setPhotos: React.Dispatch<React.SetStateAction<PhotoMeta[]>>;
 }) => {
   const Tab = createMaterialTopTabNavigator();
 
@@ -58,7 +63,7 @@ const PlantTabs = ({
           )}
         </Tab.Screen>
         <Tab.Screen name="Gallery" key={`gallery-${plant.id}`}>
-          {() => <GalleryTab plant={plant} />}
+          {() => <GalleryTab plant={plant} photos={photos} setPhotos={setPhotos} />}
         </Tab.Screen>
       </Tab.Navigator>
     </KeyboardAvoidingView>
