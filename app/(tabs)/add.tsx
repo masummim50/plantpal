@@ -1,6 +1,6 @@
 import { Colors } from "@/constants/Colors";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import * as FileSystem from "expo-file-system";
+import { Directory, Paths } from "expo-file-system";
 import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -18,7 +18,9 @@ import {
   View,
 } from "react-native";
 import uuid from "react-native-uuid";
-const PLANTS_DIR = FileSystem.documentDirectory + "plants/";
+// const PLANTS_DIR = FileSystem.documentDirectory + "plants/";
+const PLANTS_DIR = new Directory(Paths.cache + "plants/");
+console.log("Plants Directory:", PLANTS_DIR);
 export default function AddPlantScreen() {
   const [plantedAt, setPlantedAt] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
