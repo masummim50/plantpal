@@ -1,6 +1,6 @@
 import { Colors } from "@/constants/Colors";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { Directory, Paths } from "expo-file-system";
+import { Directory, File, Paths } from "expo-file-system";
 import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -19,7 +19,7 @@ import {
 } from "react-native";
 import uuid from "react-native-uuid";
 // const PLANTS_DIR = FileSystem.documentDirectory + "plants/";
-const PLANTS_DIR = new Directory(Paths.cache + "plants/");
+const PLANTS_DIR = new Directory(Paths.document,  "plants/");
 console.log("Plants Directory:", PLANTS_DIR);
 export default function AddPlantScreen() {
   const [plantedAt, setPlantedAt] = useState(new Date());
@@ -29,41 +29,87 @@ export default function AddPlantScreen() {
   const themeColors = Colors[theme || "light"];
   const router = useRouter();
   const [name, setName] = useState("");
+console.log(PLANTS_DIR)
 
-  const handleAdd = async () => {
-    if (!name.trim()) {
-      Alert.alert("Missing Info", "Please enter a plant name.");
-      return;
-    }
+// original handleAdd function
+  // const handleAdd = async () => {
+  //   if (!name.trim()) {
+  //     Alert.alert("Missing Info", "Please enter a plant name.");
+  //     return;
+  //   }
 
-    const id = uuid.v4();
-    const newPlant = {
-      id,
-      name: name.trim(),
-      plantedAt,
-      events: [],
-      notes: [],
-    };
+  //   const id = uuid.v4();
+  //   const newPlant = {
+  //     id,
+  //     name: name.trim(),
+  //     plantedAt,
+  //     events: [],
+  //     notes: [],
+  //   };
 
-    try {
-      const dirInfo = await FileSystem.getInfoAsync(PLANTS_DIR);
-      if (!dirInfo.exists) {
-        await FileSystem.makeDirectoryAsync(PLANTS_DIR, {
-          intermediates: true,
-        });
-      }
+  //   try {
+  //     // const dirInfo = await FileSystem.getInfoAsync(PLANTS_DIR);
+  //     const dirInfo = await new Directory(PLANTS_DIR)
+  //     if (!dirInfo.exists) {
+  //       // await FileSystem.makeDirectoryAsync(PLANTS_DIR, {
+  //       //   intermediates: true,
+  //       // });
+  //       // create directory with new code
+  //       await dirInfo.create();
+  //     }
 
-      const filePath = `${PLANTS_DIR}plant_${id}.json`;
-      await FileSystem.writeAsStringAsync(filePath, JSON.stringify(newPlant));
+  //     const filePath = `${PLANTS_DIR}plant_${id}.json`;
 
-      setName("");
-      setPlantedAt(new Date());
-      router.replace("/");
-    } catch (error) {
-      Alert.alert("Error", "Could not save the plant.");
-      console.error(error);
-    }
+  //     // await FileSystem.writeAsStringAsync(filePath, JSON.stringify(newPlant));
+  //     // write file with new data
+  //     await 
+
+  //     setName("");
+  //     setPlantedAt(new Date());
+  //     router.replace("/");
+  //   } catch (error) {
+  //     Alert.alert("Error", "Could not save the plant.");
+  //     console.error(error);
+  //   }
+  // };
+
+// new class based api handle add function
+const handleAdd = async () => {
+  if (!name.trim()) {
+    Alert.alert("Missing Info", "Please enter a plant name.");
+    return;
+  }
+
+  const id = uuid.v4();
+  const newPlant = {
+    id,
+    name: name.trim(),
+    plantedAt,
+    events: [],
+    notes: [],
   };
+
+  try {
+    // ensure the "plants" directory exists
+    const dirInfo = PLANTS_DIR;
+    const exists = await dirInfo.exists;
+    if (!exists) {
+      await dirInfo.create();
+    }
+
+    // create a file inside it
+    const file = new File(dirInfo, `plant_${id}.json`);
+    await file.write(JSON.stringify(newPlant));
+
+    setName("");
+    setPlantedAt(new Date());
+    router.replace("/");
+  } catch (error) {
+    console.log("error while adding plant:", error);
+    Alert.alert("Error", "Could not save the plant.");
+  }
+};
+
 
   const nameInputRef = useRef<TextInput>(null);
 

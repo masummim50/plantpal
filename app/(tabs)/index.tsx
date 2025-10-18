@@ -3,7 +3,7 @@ import { Colors } from "@/constants/Colors";
 import { formatPrettyDate, getDaysDifference } from "@/functions/Date";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
-import * as FileSystem from "expo-file-system";
+import { Directory, Paths } from "expo-file-system";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -21,7 +21,7 @@ interface Plant {
   plantedAt: string;
 }
 
-const PLANTS_DIR = FileSystem.documentDirectory + "plants/";
+const PLANTS_DIR = new Directory(Paths.document, "plants/");
 
 export default function HomeScreen() {
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
@@ -41,15 +41,21 @@ export default function HomeScreen() {
 
   const loadPlants = async () => {
     try {
-      const dirInfo = await FileSystem.getInfoAsync(PLANTS_DIR);
+      const dirInfo = PLANTS_DIR;
       if (!dirInfo.exists) {
         setPlants([]);
         setLoading(false);
         return;
       }
 
-      const files = await FileSystem.readDirectoryAsync(PLANTS_DIR);
-      const plantFiles = files.filter((f) => f.endsWith(".json"));
+      const files = dirInfo.list();
+      console.log("Files in Plants Directory:", files);
+      const plantFiles = files.filter((f) => {
+        if(f.uri.endsWith('.json')){
+          return f.uri;
+        }
+      });
+      console.log('plant files only: ', plantFiles);
 
       const loadedPlants: Plant[] = [];
 
