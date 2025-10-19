@@ -3,7 +3,7 @@ import { Colors } from "@/constants/Colors";
 import { formatPrettyDate, getDaysDifference } from "@/functions/Date";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
-import { Directory, Paths } from "expo-file-system";
+import { Directory, File, Paths } from "expo-file-system";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -21,7 +21,6 @@ interface Plant {
   plantedAt: string;
 }
 
-const PLANTS_DIR = new Directory(Paths.document, "plants/");
 
 export default function HomeScreen() {
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
@@ -41,7 +40,7 @@ export default function HomeScreen() {
 
   const loadPlants = async () => {
     try {
-      const dirInfo = PLANTS_DIR;
+      const dirInfo = new Directory(Paths.document, "plants");
       if (!dirInfo.exists) {
         setPlants([]);
         setLoading(false);
@@ -49,22 +48,19 @@ export default function HomeScreen() {
       }
 
       const files = dirInfo.list();
-      console.log("Files in Plants Directory:", files);
-      const plantFiles = files.filter((f) => {
-        if(f.uri.endsWith('.json')){
-          return f.uri;
-        }
-      });
-      console.log('plant files only: ', plantFiles);
-
+      console.log('from dirinfo.list(): ', files);
       const loadedPlants: Plant[] = [];
 
-      for (const fileName of plantFiles) {
-        const filePath = PLANTS_DIR + fileName;
-        const content = await FileSystem.readAsStringAsync(filePath);
-        const plant: Plant = JSON.parse(content);
-        loadedPlants.push(plant);
+
+      for(const file of files){
+        if(file instanceof File){
+          const text = await file.text();
+          loadedPlants.push(JSON.parse(text));
+          console.log("found instance of file: ", text)
+        }
       }
+
+
       const sortedPlants = sortPlantsByDate(loadedPlants, sortOrder);
       setPlants(sortedPlants);
     } catch (error) {
