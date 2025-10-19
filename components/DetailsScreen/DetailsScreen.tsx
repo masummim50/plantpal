@@ -1,7 +1,7 @@
 // app/[id].tsx
 import { Colors } from "@/constants/Colors";
 import { Event, Note, Plant } from "@/interfaces/plantInterface";
-import * as FileSystem from "expo-file-system";
+import { Directory, File, Paths } from "expo-file-system";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import {
@@ -17,7 +17,7 @@ import {
 import PlantInfo from "./PlantInfo";
 import PlantTabs from "./PlantTabs";
 
-const PLANTS_DIR = FileSystem.documentDirectory + "plants/";
+const PLANTS_DIR = new Directory(Paths.document,  "plants/");
 
 export const unstable_settings = {
   initialRouteName: "Details",
@@ -43,15 +43,15 @@ export default function DetailsScreen() {
       const loadPlant = async () => {
         try {
           setLoading(true);
-          const filePath = `${PLANTS_DIR}plant_${id}.json`;
-          const fileInfo = await FileSystem.getInfoAsync(filePath);
-          if (!fileInfo.exists) {
-            console.warn("Plant file not found:", filePath);
+          const fileName = `plant_${id}.json`;
+          const file = new File(PLANTS_DIR, fileName);
+          if (!file.exists) {
+            console.warn("Plant file not found:", fileName);
             router.back();
             return;
           }
 
-          const content = await FileSystem.readAsStringAsync(filePath);
+          const content = await file.text();
           const plantData: Plant = JSON.parse(content);
           if (isActive) {
             setPlant(plantData);
@@ -69,13 +69,19 @@ export default function DetailsScreen() {
       };
     }, [id])
   );
+
   const handleAddEvent = async (event: Event) => {
     if (!plant) return;
 
     try {
-      const filePath = PLANTS_DIR + `plant_${plant.id}.json`;
+      // const filePath = PLANTS_DIR + `plant_${plant.id}.json`;
+      const file = new File(PLANTS_DIR, `plant_${plant.id}.json`);
+      if (!file.exists) {
+        console.warn("Plant file not found:");
+        return;
+      }
 
-      const existingData = await FileSystem.readAsStringAsync(filePath);
+      const existingData = await file.text();
       const plantData = JSON.parse(existingData);
 
       if (!Array.isArray(plantData.events)) {
@@ -90,8 +96,7 @@ export default function DetailsScreen() {
           new Date(a.date).getTime() - new Date(b.date).getTime()
       );
 
-      await FileSystem.writeAsStringAsync(
-        filePath,
+      file.write(
         JSON.stringify(plantData, null, 2)
       );
 
@@ -102,13 +107,18 @@ export default function DetailsScreen() {
       console.error("Failed to add event", error);
     }
   };
+
   const handleDeleteEvent = async (eventId: string) => {
     if (!plant) return;
 
     try {
-      const filePath = PLANTS_DIR + `plant_${plant.id}.json`;
+      const file = new File(PLANTS_DIR, `plant_${plant.id}.json`);
+      if (!file.exists) {
+        console.warn("Plant file not found:");
+        return;
+      }
 
-      const existingData = await FileSystem.readAsStringAsync(filePath);
+      const existingData = await file.text();
       const plantData = JSON.parse(existingData);
 
       if (!Array.isArray(plantData.events)) {
@@ -119,8 +129,7 @@ export default function DetailsScreen() {
         (event: Event) => event.id !== eventId
       );
 
-      await FileSystem.writeAsStringAsync(
-        filePath,
+      file.write(
         JSON.stringify(plantData, null, 2)
       );
 
@@ -134,9 +143,13 @@ export default function DetailsScreen() {
     if (!plant) return;
 
     try {
-      const filePath = PLANTS_DIR + `plant_${plant.id}.json`;
+      const file = new File(PLANTS_DIR, `plant_${plant.id}.json`);
+      if (!file.exists) {
+        console.warn("Plant file not found:");
+        return;
+      }
 
-      const existingData = await FileSystem.readAsStringAsync(filePath);
+      const existingData = await file.text();
       const plantData = JSON.parse(existingData);
 
       if (!Array.isArray(plantData.notes)) {
@@ -145,8 +158,7 @@ export default function DetailsScreen() {
 
       plantData.notes.push(note);
 
-      await FileSystem.writeAsStringAsync(
-        filePath,
+      file.write(
         JSON.stringify(plantData, null, 2)
       );
 
@@ -160,9 +172,13 @@ export default function DetailsScreen() {
     if (!plant) return;
 
     try {
-      const filePath = PLANTS_DIR + `plant_${plant.id}.json`;
+      const file = new File(PLANTS_DIR, `plant_${plant.id}.json`);
+      if (!file.exists) {
+        console.warn("Plant file not found:");
+        return;
+      }
 
-      const existingData = await FileSystem.readAsStringAsync(filePath);
+      const existingData = await file.text();
       const plantData = JSON.parse(existingData);
 
       if (!Array.isArray(plantData.notes)) {
@@ -173,8 +189,8 @@ export default function DetailsScreen() {
         (note: Note) => note.id !== noteId
       );
 
-      await FileSystem.writeAsStringAsync(
-        filePath,
+      file.write(
+        
         JSON.stringify(plantData, null, 2)
       );
 
@@ -186,14 +202,14 @@ export default function DetailsScreen() {
 
   const deletePlant = async () => {
     try {
-      const filePath = `${PLANTS_DIR}plant_${id}.json`;
-      const fileInfo = await FileSystem.getInfoAsync(filePath);
-      if (fileInfo.exists) {
-        await FileSystem.deleteAsync(filePath);
-        console.log("Deleted plant:", filePath);
+      const file = new File(PLANTS_DIR, `plant_${plantId}.json`);
+      
+      if (file.exists) {
+        file.delete();
+        console.log("Deleted plant:", file);
         setModalVisible(false);
       } else {
-        console.warn("Plant file does not exist:", filePath);
+        console.warn("Plant file does not exist: from delete plant function");
       }
 
       router.replace("/"); // Navigate back to home screen
