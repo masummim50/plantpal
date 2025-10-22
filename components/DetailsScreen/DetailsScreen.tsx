@@ -245,7 +245,7 @@ export default function DetailsScreen() {
 
   return (
       <View style={{ flex: 1, backgroundColor: color.background , }}>
-        
+        <Text>this is detailscreen.tsx file</Text>
       {/* Fixed Header */}
       <PlantInfo plant={plant} handleDeleteClick={handleDeleteClick} />
 

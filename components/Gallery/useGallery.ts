@@ -1,4 +1,3 @@
-import * as FileSystem from "expo-file-system";
 import { useState } from "react";
 
 export type PhotoMeta = {
@@ -10,7 +9,7 @@ export type PhotoMeta = {
 
 export function useGallery(plantId: string, plantedAt: string) {
   
-  const folderUri = `${FileSystem.documentDirectory}${plantId}_images`;
+  // const folderUri = `${FileSystem.documentDirectory}${plantId}_images`;
   const [photos, setPhotos] = useState<PhotoMeta[]>([]);
   const [sortNewestFirst, setSortNewestFirst] = useState(true);
   const [viewMode, setViewMode] = useState<"list" | "grid">("grid");
@@ -18,12 +17,12 @@ export function useGallery(plantId: string, plantedAt: string) {
 
   
 
-  const ensureFolderExists = async () => {
-    const folderInfo = await FileSystem.getInfoAsync(folderUri);
-    if (!folderInfo.exists) {
-      await FileSystem.makeDirectoryAsync(folderUri, { intermediates: true });
-    }
-  };
+  // const ensureFolderExists = async () => {
+  //   const folderInfo = await FileSystem.getInfoAsync(folderUri);
+  //   if (!folderInfo.exists) {
+  //     await FileSystem.makeDirectoryAsync(folderUri, { intermediates: true });
+  //   }
+  // };
 
   // const loadPhotos = async () => {
   //   console.log("load photos function starting")

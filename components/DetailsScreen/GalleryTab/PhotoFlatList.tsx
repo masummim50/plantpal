@@ -8,8 +8,8 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { PhotoMeta } from "../Gallery/GalleryFunctions";
-import PhotoItem from "../Gallery/PhotoItem";
+import { PhotoMeta } from "../../Gallery/GalleryFunctions";
+import PhotoItem from "../../Gallery/PhotoItem";
 
 const PhotoFlatList = ({
   photos,

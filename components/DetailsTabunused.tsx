@@ -1,9 +1,9 @@
 import { Event, Note, Plant } from "@/interfaces/plantInterface";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import AddNotes from "./DetailsScreen/AddNotes";
-import EventSection from "./DetailsScreen/EventSection";
-import NotesSection from "./DetailsScreen/NotesSection";
-import PlantEvents from "./DetailsScreen/PlantEvents";
+import AddNotes from "./DetailsScreen/DetailsTab/AddNotes";
+import EventSection from "./DetailsScreen/DetailsTab/EventSection";
+import NotesSection from "./DetailsScreen/DetailsTab/NotesSection";
+import PlantEvents from "./DetailsScreen/DetailsTab/PlantEvents";
 
 export default function DetailsTab({
   plant,

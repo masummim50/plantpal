@@ -10,9 +10,9 @@ import {
   View,
 } from "react-native";
 
-import EnhancedImageViewing from "react-native-image-viewing";
+import ImageView from "react-native-image-viewing";
 import { ImageSource } from "react-native-image-viewing/dist/@types";
-import { GalleryFunctions, PhotoMeta } from "../Gallery/GalleryFunctions";
+import { GalleryFunctions, PhotoMeta } from "../../Gallery/GalleryFunctions";
 import GallerySortingBar from "./GallerySortingBar";
 import PhotoFlatList from "./PhotoFlatList";
 
@@ -51,7 +51,9 @@ const GalleryTab = ({ plant }: { plant: Plant }) => {
  
 
   const onPhotoPress = (index: number) => {
+    console.log("photo has been pressed: ", index)
     setCurrentIndex(index);
+    setViewerVisible(true);
   };
 
   const handleDeleteFromViewer = async () => {
@@ -67,6 +69,7 @@ const GalleryTab = ({ plant }: { plant: Plant }) => {
       setPhotos(loadedPhotos);
     }
   };
+
   const handleTakePhoto = async () => {
     await GalleryFunctions.takePhoto(plant.id, plant.plantedAt);
     const loadedPhotos = await GalleryFunctions.loadPhotos(
@@ -106,7 +109,7 @@ const GalleryTab = ({ plant }: { plant: Plant }) => {
       </TouchableOpacity>
 
       {/* the image view component is below */}
-      <EnhancedImageViewing
+      <ImageView
         images={images}
         imageIndex={currentIndex}
         visible={isViewerVisible}

@@ -10,7 +10,6 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import AddNotes from "./AddNotes";
 import EventSection from "./EventSection";
 import NotesSection from "./NotesSection";
 import PlantEvents from "./PlantEvents";
@@ -44,8 +43,8 @@ const DetailsTab = ({
             keyboardShouldPersistTaps="handled"
             style={{ backgroundColor: color.background }}
           >
-            <PlantEvents onAddEvent={handleAddEvent} />
-            <AddNotes onAddNote={handleAddNote} />
+            <PlantEvents onAddEvent={handleAddEvent} onAddNote={handleAddNote} />
+            {/* <AddNotes onAddNote={handleAddNote} /> */}
 
             {plant.events?.length ? (
               <EventSection

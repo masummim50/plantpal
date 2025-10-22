@@ -4,11 +4,10 @@ import { Colors } from "@/constants/Colors";
 import { plantEvents } from "@/constants/PlantEvents";
 import React, { useState } from "react";
 
-import { Event } from "@/interfaces/plantInterface";
+import { Event, Note } from "@/interfaces/plantInterface";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import {
   FlatList,
-  Keyboard,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -18,7 +17,7 @@ import {
   TextInput,
   TouchableOpacity,
   useColorScheme,
-  View,
+  View
 } from "react-native";
 
 const quickEvents = plantEvents.slice(0, 4);
@@ -26,8 +25,10 @@ const moreEvents = plantEvents.slice(4);
 
 export default function PlantEvents({
   onAddEvent,
+  onAddNote
 }: {
-  onAddEvent: (event: Event) => void;
+  onAddEvent: (event: Event) => void,
+  onAddNote: (note: Note) => void
 }) {
   const scheme = useColorScheme() ?? "light";
   const color = Colors[scheme];
@@ -41,33 +42,41 @@ export default function PlantEvents({
     setShowModal(false);
   };
 
-  const handleAddClick = ()=> {
-    if(Keyboard.isVisible()){
-      Keyboard.dismiss();
-      setTimeout(()=> {
-        handleAdd()
-      }, 50)
-    }else{
-      handleAdd()
-    }
-  }
-  const handleAdd = () => {
+  // const handleAddClick = ()=> {
+  //   if(Keyboard.isVisible()){
+  //     Keyboard.dismiss();
+  //     setTimeout(()=> {
+  //       handleAdd()
+  //     }, 50)
+  //   }else{
+  //     handleAdd()
+  //   }
+  // }
+
+  const handleAdd = (type: 'note' | 'event') => {
     if (!eventName.trim()) return;
 
     const now = new Date();
     const isFuture = eventDate.getTime() > now.getTime();
-
-    onAddEvent({
-      id: uuid.v4(),
-      name: eventName.trim(),
-      date: eventDate.toISOString(),
-      past: isFuture ? false : true,
-      completed: isFuture ? false : true,
-    });
+    if (type === 'note') {
+      onAddNote({
+        id: uuid.v4(),
+        note: eventName.trim(),
+      });
+    } else {
+      onAddEvent({
+        id: uuid.v4(),
+        name: eventName.trim(),
+        date: eventDate.toISOString(),
+        past: isFuture ? false : true,
+        completed: isFuture ? false : true,
+      });
+    }
 
     setEventName("");
     setEventDate(new Date());
   };
+
 
   return (
     <KeyboardAvoidingView
@@ -151,13 +160,22 @@ export default function PlantEvents({
           />
         )}
 
-        <TouchableOpacity
-          onPress={handleAdd}
-          style={[styles.addButton, { backgroundColor: Colors.primary }]}
-        >
-          <Text style={{ color: "#fff", fontWeight: "bold" }}>Add Event</Text>
-        </TouchableOpacity>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
 
+          <TouchableOpacity
+            onPress={() => handleAdd('event')}
+            style={[styles.addButton, { backgroundColor: Colors.primary }]}
+          >
+            <Text style={{ color: "#fff", fontWeight: "bold" }}>Add Event</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => handleAdd('note')}
+            style={[styles.addButton, { backgroundColor: Colors.primary }]}
+          >
+            <Text style={{ color: "#fff", fontWeight: "bold" }}>Add Note</Text>
+          </TouchableOpacity>
+
+        </View>
         {/* Modal for 'More...' */}
         <Modal visible={showModal} animationType="fade" transparent>
           <View style={styles.modalOverlay}>
@@ -225,6 +243,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 10,
     marginTop: 8,
+    width: "48%",
   },
   modalOverlay: {
     flex: 1,

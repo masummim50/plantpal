@@ -70,6 +70,7 @@ export default function GalleryView({ plantId, plantedAt }: Props) {
   const images = photos.map((p) => ({ uri: p.uri }));
 
   const onPhotoPress = (index: number) => {
+    console.log("photo pressed at index: ", index);
     setCurrentIndex(index);
     setViewerVisible(true);
   };
@@ -95,8 +96,7 @@ export default function GalleryView({ plantId, plantedAt }: Props) {
 
   const [indexForText, setIndexForText] = React.useState(0);
 
-  // const daysAfterPlanted = (photoDate: string) =>
-  //   differenceInDays(new Date(photoDate), parseISO(plantedAt));
+
 
   return (
     <View style={[styles.container, { backgroundColor: color.background }]}>

@@ -3,8 +3,8 @@ import { Event, Note, Plant } from "@/interfaces/plantInterface";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import React from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet, useColorScheme } from "react-native";
-import DetailsTab from "./DetailsTab";
-import GalleryTab from "./GalleryTab";
+import DetailsTab from "./DetailsTab/DetailsTab";
+import GalleryTab from "./GalleryTab/GalleryTab";
 
 const PlantTabs = ({
   plant,
