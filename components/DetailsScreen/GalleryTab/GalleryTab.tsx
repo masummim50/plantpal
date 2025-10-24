@@ -83,7 +83,7 @@ const GalleryTab = ({ plant }: { plant: Plant }) => {
   return (
     <View style={[styles.container, { backgroundColor: color.background }]}>
       {/* to sort images */}
-      <GallerySortingBar viewMode={viewMode} toggleView={toggleView} />
+      <GallerySortingBar viewMode={viewMode} toggleView={toggleView} plantId={plant.id} />
 
       {photosLoading ? (
         <Text style={[styles.emptyText, { color: color.text }]}>
