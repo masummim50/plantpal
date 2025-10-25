@@ -203,6 +203,11 @@ export default function DetailsScreen() {
   const deletePlant = async () => {
     try {
       const file = new File(PLANTS_DIR, `plant_${plantId}.json`);
+      // find the images directory for this plant and delete it as well
+      const imagedir = new Directory(Paths.document, `${plantId}_images`);
+      if (imagedir.exists) {
+        imagedir.delete();
+      }
       
       if (file.exists) {
         file.delete();
@@ -245,7 +250,7 @@ export default function DetailsScreen() {
 
   return (
       <View style={{ flex: 1, backgroundColor: color.background , }}>
-        <Text>this is detailscreen.tsx file</Text>
+        
       {/* Fixed Header */}
       <PlantInfo plant={plant} handleDeleteClick={handleDeleteClick} />
 

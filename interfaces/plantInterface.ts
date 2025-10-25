@@ -20,5 +20,6 @@ export interface Plant {
 
 export interface LogEntry {
     title: string;
+    plantedEvent?:boolean;
     date: string
 }

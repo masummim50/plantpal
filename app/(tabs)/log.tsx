@@ -1,6 +1,6 @@
 import LogFilters, { FilterType } from "@/components/LogFilters";
 import { Colors } from "@/constants/Colors";
-import { createLogBook, getAllPlants } from "@/functions/DataFunctions";
+import { createLogBook } from "@/functions/DataFunctions";
 import {
   formatPrettyDate,
   getDaysDifference,
@@ -19,8 +19,7 @@ export default function log() {
   const [order, setOrder] = useState<FilterType>("oldest");
   const [filter, setFilter] = useState(false);
   const fetchLogs = async () => {
-    const plants = await getAllPlants();
-    const logs = createLogBook(plants);
+    const logs = await createLogBook();
     setLogBook(logs);
     setLoading(false);
   };
@@ -78,7 +77,7 @@ const LogCard = ({ item, filter }: { item: LogEntry, filter: boolean }) => {
       style={[
         styles.card,
         {
-          backgroundColor: isFuture ? color.uiBackground : "transparent",
+          backgroundColor: item.plantedEvent ? color.uiBackground : 'transparent',
           borderColor: color.uiBackground,
           display: filter ? isFuture ? 'flex' : 'none' : 'flex'
         },
