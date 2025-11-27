@@ -51,7 +51,6 @@ const GalleryTab = ({ plant }: { plant: Plant }) => {
  
 
   const onPhotoPress = (index: number) => {
-    console.log("photo has been pressed: ", index)
     setCurrentIndex(index);
     setViewerVisible(true);
   };
@@ -59,7 +58,6 @@ const GalleryTab = ({ plant }: { plant: Plant }) => {
   const handleDeleteFromViewer = async () => {
     const photoToDelete = photos[currentIndex];
     if (photoToDelete) {
-      console.log(photoToDelete.uri);
       await GalleryFunctions.deletePhoto(photoToDelete.uri);
       const loadedPhotos = await GalleryFunctions.loadPhotos(
         plant.id,
@@ -83,7 +81,7 @@ const GalleryTab = ({ plant }: { plant: Plant }) => {
   return (
     <View style={[styles.container, { backgroundColor: color.background }]}>
       {/* to sort images */}
-      <GallerySortingBar viewMode={viewMode} toggleView={toggleView} plantId={plant.id} />
+      <GallerySortingBar viewMode={viewMode} toggleView={toggleView} plantId={plant.id} toggleSort={toggleSort} sortNewestFirst={sortNewestFirst} />
 
       {photosLoading ? (
         <Text style={[styles.emptyText, { color: color.text }]}>
@@ -98,6 +96,7 @@ const GalleryTab = ({ plant }: { plant: Plant }) => {
           plantId={plant.id}
           plantedAt={plant.plantedAt}
           setPhotos={setPhotos}
+          sortNewestFirst={sortNewestFirst}
         />
       )}
 

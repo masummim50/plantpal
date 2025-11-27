@@ -78,7 +78,7 @@ const LogCard = ({ item, filter }: { item: LogEntry, filter: boolean }) => {
         styles.card,
         {
           backgroundColor: item.plantedEvent ? color.uiBackground : 'transparent',
-          borderColor: color.uiBackground,
+          borderColor: item.plantedEvent ? Colors.primary : color.uiBackground,
           display: filter ? isFuture ? 'flex' : 'none' : 'flex'
         },
       ]}
@@ -98,15 +98,7 @@ const LogCard = ({ item, filter }: { item: LogEntry, filter: boolean }) => {
         </Text>
       )}
 
-      {/* <Text style={[styles.date, { color: color.text, opacity: 0.6 }]}>
-        {isFuture
-          ? `perform event on ${formatPrettyDate(item.date)}, in ${
-              time.time
-            } days`
-          : time.time === 0
-          ? "today"
-          : ` ${time.time} days ago on ${formatPrettyDate(item.date)}`}
-      </Text> */}
+      
     </View>
   );
 };

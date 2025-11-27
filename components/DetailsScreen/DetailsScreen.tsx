@@ -211,7 +211,6 @@ export default function DetailsScreen() {
       
       if (file.exists) {
         file.delete();
-        console.log("Deleted plant:", file);
         setModalVisible(false);
       } else {
         console.warn("Plant file does not exist: from delete plant function");

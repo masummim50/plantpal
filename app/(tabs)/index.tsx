@@ -48,7 +48,6 @@ export default function HomeScreen() {
       }
 
       const files = dirInfo.list();
-      console.log('from dirinfo.list(): ', files);
       const loadedPlants: Plant[] = [];
 
 
@@ -56,7 +55,6 @@ export default function HomeScreen() {
         if(file instanceof File){
           const text = await file.text();
           loadedPlants.push(JSON.parse(text));
-          console.log("found instance of file: ", text)
         }
       }
 

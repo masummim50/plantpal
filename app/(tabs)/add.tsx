@@ -20,7 +20,7 @@ import {
 import uuid from "react-native-uuid";
 // const PLANTS_DIR = FileSystem.documentDirectory + "plants/";
 const PLANTS_DIR = new Directory(Paths.document,  "plants/");
-console.log("Plants Directory:", PLANTS_DIR);
+
 export default function AddPlantScreen() {
   const [plantedAt, setPlantedAt] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
@@ -29,7 +29,7 @@ export default function AddPlantScreen() {
   const themeColors = Colors[theme || "light"];
   const router = useRouter();
   const [name, setName] = useState("");
-console.log(PLANTS_DIR)
+
 
 // original handleAdd function
   // const handleAdd = async () => {
@@ -105,7 +105,6 @@ const handleAdd = async () => {
     setPlantedAt(new Date());
     router.replace("/");
   } catch (error) {
-    console.log("error while adding plant:", error);
     Alert.alert("Error", "Could not save the plant.");
   }
 };
@@ -193,7 +192,7 @@ const handleAdd = async () => {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, justifyContent: "center" },
+  container: { flex: 1, padding: 16, justifyContent: "flex-start" },
   title: { fontSize: 24, fontWeight: "bold", marginBottom: 20 },
   input: {
     borderWidth: 1,

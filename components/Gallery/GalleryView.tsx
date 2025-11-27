@@ -70,7 +70,6 @@ export default function GalleryView({ plantId, plantedAt }: Props) {
   const images = photos.map((p) => ({ uri: p.uri }));
 
   const onPhotoPress = (index: number) => {
-    console.log("photo pressed at index: ", index);
     setCurrentIndex(index);
     setViewerVisible(true);
   };
@@ -78,7 +77,6 @@ export default function GalleryView({ plantId, plantedAt }: Props) {
   const handleDeleteFromViewer = async () => {
     const photoToDelete = photos[currentIndex];
     if (photoToDelete) {
-      console.log(photoToDelete.uri);
       await GalleryFunctions.deletePhoto(photoToDelete.uri);
       setViewerVisible(false);
       const loadedPhotos = await GalleryFunctions.loadPhotos(

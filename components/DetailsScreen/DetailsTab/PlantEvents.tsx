@@ -104,10 +104,10 @@ export default function PlantEvents({
             onPress={() => setShowModal(true)}
             style={[
               styles.quickButton,
-              { backgroundColor: color.uiBackground },
+              { backgroundColor: Colors.primary, opacity: 0.8},
             ]}
           >
-            <Text style={{ color: color.title }}>More…</Text>
+            <Text style={{ color: 'white' }}>More…</Text>
           </TouchableOpacity>
         </View>
 
@@ -122,7 +122,7 @@ export default function PlantEvents({
           <TextInput
             value={eventName}
             onChangeText={setEventName}
-            placeholder="Event Name"
+            placeholder="Write Event/Note"
             placeholderTextColor="#aaa"
             style={[
               styles.input,

@@ -25,7 +25,6 @@ const deleteAllPhotos = async (plantId: string) => {
   
   if (imageDir.exists) {
     imageDir.delete();
-    console.log("Deleted image directory for plant:", plantId);
   }
 };
 
@@ -34,7 +33,6 @@ export const deletePlant = async (plantId: string) => {
     const plantFile = new File(PLANTS_DIR, `plant_${plantId}.json`);
     if (plantFile.exists) {
       plantFile.delete();
-      console.log("Deleted plant:", plantFile);
     } else {
       console.warn("Plant file does not exist:", plantFile);
     }
@@ -49,36 +47,35 @@ export const updatePlant = async (plantId: string, updatedPlant: any) => {
   try {
     const plantFile = new File(PLANTS_DIR, `plant_${plantId}.json`);
     plantFile.write(JSON.stringify(updatedPlant, null, 2));
-    console.log("Updated plant:", plantFile);
   } catch (error) {
     console.error("Error updating plant:", error);
   }
 };
 
-export const getAllPlants = async () => {
-  try {
-    const dirInfo = await FileSystem.getInfoAsync(PLANTS_DIR);
-    if (!dirInfo.exists) {
-      return [];
-    }
+// export const getAllPlants = async () => {
+//   try {
+//     const dirInfo = await FileSystem.getInfoAsync(PLANTS_DIR);
+//     if (!dirInfo.exists) {
+//       return [];
+//     }
 
-    const files = await FileSystem.readDirectoryAsync(PLANTS_DIR);
-    const plantFiles = files.filter((f) => f.endsWith(".json"));
+//     const files = await FileSystem.readDirectoryAsync(PLANTS_DIR);
+//     const plantFiles = files.filter((f) => f.endsWith(".json"));
 
-    const plants = await Promise.all(
-      plantFiles.map(async (fileName) => {
-        const filePath = `${PLANTS_DIR}${fileName}`;
-        const content = await FileSystem.readAsStringAsync(filePath);
-        return JSON.parse(content);
-      })
-    );
+//     const plants = await Promise.all(
+//       plantFiles.map(async (fileName) => {
+//         const filePath = `${PLANTS_DIR}${fileName}`;
+//         const content = await FileSystem.readAsStringAsync(filePath);
+//         return JSON.parse(content);
+//       })
+//     );
 
-    return plants;
-  } catch (error) {
-    console.error("Error getting all plants:", error);
-    return [];
-  }
-};
+//     return plants;
+//   } catch (error) {
+//     console.error("Error getting all plants:", error);
+//     return [];
+//   }
+// };
 
 // export function createLogBook(plants: Plant[]): LogEntry[] {
 //   const logs: LogEntry[] = [];
@@ -110,7 +107,6 @@ export async function createLogBook(): Promise< LogEntry[]> {
   const logs: LogEntry[] = [];
 
   const plantFiles = new Directory(PLANTS_DIR).list();
-  console.log("plant files from create log function: ", plantFiles)
   for(const file of plantFiles){
     if(file instanceof File){
 
@@ -143,5 +139,4 @@ export const plantFunctions = {
   getPlantInfo,
   deletePlant,
   updatePlant,
-  getAllPlants,
 }

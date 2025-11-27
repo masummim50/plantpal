@@ -19,6 +19,7 @@ const PhotoFlatList = ({
   plantId,
   plantedAt,
   setPhotos,
+  sortNewestFirst
 }: {
   photos: PhotoMeta[];
   numColumns: number;
@@ -27,6 +28,7 @@ const PhotoFlatList = ({
   plantId: string;
   plantedAt: string;
   setPhotos: React.Dispatch<React.SetStateAction<PhotoMeta[]>>;
+  sortNewestFirst:boolean;
 }) => {
   const theme = useColorScheme();
   const color = theme === "dark" ? Colors.dark : Colors.light;
