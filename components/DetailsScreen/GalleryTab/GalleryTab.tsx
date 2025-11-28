@@ -13,6 +13,7 @@ import {
 import ImageView from "react-native-image-viewing";
 import { ImageSource } from "react-native-image-viewing/dist/@types";
 import { GalleryFunctions, PhotoMeta } from "../../Gallery/GalleryFunctions";
+import ExportButton from "./ExportButton";
 import GallerySortingBar from "./GallerySortingBar";
 import PhotoFlatList from "./PhotoFlatList";
 
@@ -80,6 +81,8 @@ const GalleryTab = ({ plant }: { plant: Plant }) => {
 
   return (
     <View style={[styles.container, { backgroundColor: color.background }]}>
+      {/* export image button */}
+      <ExportButton photos={photos} />
       {/* to sort images */}
       <GallerySortingBar viewMode={viewMode} toggleView={toggleView} plantId={plant.id} toggleSort={toggleSort} sortNewestFirst={sortNewestFirst} />
 

@@ -30,6 +30,17 @@ export default function AddPlantScreen() {
   const router = useRouter();
   const [name, setName] = useState("");
 
+  const isToday = (date: Date): boolean => {
+  const today = new Date();
+  
+  return (
+    date.getFullYear() === today.getFullYear() &&
+    date.getMonth() === today.getMonth() &&
+    date.getDate() === today.getDate()
+  );
+}
+
+
 
 // original handleAdd function
   // const handleAdd = async () => {
@@ -159,7 +170,8 @@ const handleAdd = async () => {
               Planted on:
             </Text>
             <View style={{ flexDirection: "row", gap: 12 }}>
-              <Button title="Today" onPress={() => setPlantedAt(new Date())} />
+              <Button title="Today"  onPress={() => setPlantedAt(new Date())} />
+              
               <Button title="Pick Date" onPress={() => setShowPicker(true)} />
             </View>
 
@@ -172,6 +184,7 @@ const handleAdd = async () => {
             title="Save Plant"
             onPress={handleAdd}
             color={Colors.primary}
+            
           />
           {showPicker && (
             <DateTimePicker
