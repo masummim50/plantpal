@@ -1,27 +1,45 @@
-import { PhotoMeta } from '@/components/Gallery/GalleryFunctions';
-import { File } from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import React from 'react';
 import { Pressable, Text, View } from 'react-native';
 
-const ExportButton = ({ photos }: { photos: PhotoMeta[] }) => {
+const ExportButton = ({ plantId }: {plantId:string  }) => {
 
-    const runExportFunction = async () => {
-        photos.map(async (image, index) => {
-            const photoFile = new File(image.uri);
-            if(photoFile.exists){
-                console.log(`Photo ${index + 1} exists at URI: ${image.uri}`);
-                const base = await photoFile.base64();
-                console.log(base.length); // Log first 30 chars    
-            }
 
-        });
+    async function exportImagesToSdCard() {
+        const imagesDir = FileSystem.documentDirectory + `${plantId}_images`;
+        const files = await FileSystem.readDirectoryAsync(imagesDir);
+
+        const permissions = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
+        if (!permissions.granted) return;
+
+        const folderUri = permissions.directoryUri;
+
+        for (const filename of files) {
+            const path = `${imagesDir}/${filename}`;
+            const fileContent = await FileSystem.readAsStringAsync(path, {
+                encoding: FileSystem.EncodingType.Base64,
+            });
+
+            const mimeType = filename.endsWith(".jpg") ? "image/jpeg" : "application/octet-stream";
+            const newFileUri = await FileSystem.StorageAccessFramework.createFileAsync(
+                folderUri,
+                filename,
+                mimeType
+            );
+
+            await FileSystem.writeAsStringAsync(newFileUri, fileContent, {
+                encoding: FileSystem.EncodingType.Base64,
+            });
+        }
+
+        alert("✅ All images exported successfully!");
     }
 
 
     return (
         <View>
             <Pressable
-                onPress={runExportFunction}
+                onPress={exportImagesToSdCard}
                 style={{ padding: 10, backgroundColor: 'lightgray', borderRadius: 5, margin: 10, display: 'flex', alignItems: 'center' }}>
                 <Text>Export images</Text>
             </Pressable>

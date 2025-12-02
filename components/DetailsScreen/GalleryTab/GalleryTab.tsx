@@ -82,7 +82,7 @@ const GalleryTab = ({ plant }: { plant: Plant }) => {
   return (
     <View style={[styles.container, { backgroundColor: color.background }]}>
       {/* export image button */}
-      <ExportButton photos={photos} />
+      <ExportButton plantId={plant.id} />
       {/* to sort images */}
       <GallerySortingBar viewMode={viewMode} toggleView={toggleView} plantId={plant.id} toggleSort={toggleSort} sortNewestFirst={sortNewestFirst} />
 
