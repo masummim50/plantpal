@@ -6,7 +6,8 @@ const ExportButton = ({ plantId }: {plantId:string  }) => {
 
 
     async function exportImagesToSdCard() {
-        const imagesDir = FileSystem.documentDirectory + `${plantId}_images`;
+        try {
+            const imagesDir = FileSystem.documentDirectory + `${plantId}_images`;
         const files = await FileSystem.readDirectoryAsync(imagesDir);
 
         const permissions = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
@@ -33,6 +34,9 @@ const ExportButton = ({ plantId }: {plantId:string  }) => {
         }
 
         alert("✅ All images exported successfully!");
+        } catch (error) {
+            alert("❌ Error exporting images. Possible Reasons: file too large or app doesn't have permission to access your storage. Try selecting a different storage such as internal storage or sd card.");
+        }
     }
 
 
